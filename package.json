@@ -11,6 +11,7 @@
     "react-hook-form": "^6.0.8",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
+    "react-s-alert": "^1.4.1",
     "react-scripts": "3.4.1"
   },
   "scripts": {
