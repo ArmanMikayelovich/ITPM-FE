@@ -1,4 +1,3 @@
-import React from "react";
 import {HOST_ADDRESS} from "../constants/consts";
 
 
@@ -50,23 +49,6 @@ export function updateProject(data) {
         .catch(error => console.log(`an error occurred ${error}`));
 }
 
-export function findProjectById(projectId) {
-
-    return fetch(HOST_ADDRESS + '/projects/' + projectId, {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'application/json',
-            // 'Access-Control-Allow-Origin': '*'
-        },
-    }).then((response) => {
-
-            alert(JSON.stringify(response.content));
-            return response.json().content;
-        }
-    ).catch(error => console.log(`an error occurred ${error}`));
-
-}
 
 export function deleteProject(projectId) {
 
@@ -87,21 +69,3 @@ export function deleteProject(projectId) {
         .catch(error => console.log(`an error occurred ${error}`));
 }
 
-export function findAllByUserId(userId) {
-
-    fetch(HOST_ADDRESS + '/projects/by-users/' + userId, {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'application/json'
-
-        },
-    })
-        .then((response) => {
-                alert(response);
-                return response.content;
-            }
-        )
-
-        .catch(error => console.log(`an error occurred ${error}`));
-}
