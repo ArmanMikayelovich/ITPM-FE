@@ -10,6 +10,7 @@ export function Header() {
                     <li><Link to='/login'>Log in</Link></li>
                     <li><Link to='/projects'> Project Page</Link></li>
                     <li><Link to='/sprints'> Sprints Page</Link></li>
+                    <li><Link to='/tasks'> Tasks Page</Link></li>
 
                 </ul>
             </nav>
