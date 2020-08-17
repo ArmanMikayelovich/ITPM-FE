@@ -5,6 +5,7 @@ import {Home} from "./Home";
 import {ProjectsPage} from "./project/Projects";
 import {SprintPage} from "./sprint/Sprints";
 import {TasksPage} from "./task/Tasks";
+import {CommentsPage} from "./comment/Comments";
 
 export function Main() {
     return (
@@ -15,6 +16,7 @@ export function Main() {
                 <Route path='/projects' component={ProjectsPage}/>
                 <Route path='/sprints' component={SprintPage}/>
                 <Route path='/tasks' component={TasksPage}/>
+                <Route path='/comments' component={CommentsPage}/>
             </Switch>
         </div>
     )

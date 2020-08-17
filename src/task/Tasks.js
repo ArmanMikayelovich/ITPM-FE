@@ -250,13 +250,9 @@ export function TasksPage() {
             <TaskById/>
             <br/>
             <DeleteTask/>
-
             <br/>
             <AttachToUserForm/>
-
             <br/>
-
-
         </div>
     );
 }
