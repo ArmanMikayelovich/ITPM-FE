@@ -2,7 +2,8 @@ import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import {createProject, deleteProject, updateProject} from "../rest-service/ProjectService";
 import {HOST_ADDRESS} from '../constants/consts'
-
+import {useLocation} from "react-router";
+import Cookies from 'js-cookie'
 function CreateProjectForm() {
 
     const {register, handleSubmit} = useForm();
@@ -101,19 +102,23 @@ function ProjectsByUserId() {
     const fetchProject = () => fetch(HOST_ADDRESS + '/projects/by-user/' + userId, {
         method: 'GET',
         mode: 'cors',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
+
         },
     }).then((response) => response.json())
-        .then(data =>{ console.log(data);
-            setProjects(JSON.stringify(data.content));})
+        .then(data => {
+            console.log(data);
+            setProjects(JSON.stringify(data.content));
+        })
         .catch(error => console.log(`an error occurred ${error}`));
 
 
     return (
         <div>
-            Get Project By User id <br/>
+            Get Projects By User id <br/>
             <input type={'text'} name={"projectId"} onChange={(e) => setUserId(e.target.value)}/>
             <button onClick={fetchProject}>Get</button>
             <h5>Projects by User: {userId}</h5>
@@ -125,8 +130,12 @@ function ProjectsByUserId() {
 }
 
 export function ProjectsPage() {
+
+    const location = useLocation();
+
     return (
         <div>
+            <h2>{location.projectId}</h2>
             <CreateProjectForm/>
             <br/>
             <UpdateProjectForm/>
