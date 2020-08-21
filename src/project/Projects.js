@@ -2,8 +2,10 @@ import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import {createProject, deleteProject, updateProject} from "../rest-service/ProjectService";
 import {HOST_ADDRESS} from '../constants/consts'
-import {useLocation} from "react-router";
-import Cookies from 'js-cookie'
+import {Switch, useLocation} from "react-router";
+import {Link, Route} from "react-router-dom";
+import {ProjectPage} from "./ProjectPage";
+
 function CreateProjectForm() {
 
     const {register, handleSubmit} = useForm();
@@ -129,22 +131,57 @@ function ProjectsByUserId() {
     );
 }
 
-export function ProjectsPage() {
+function ProjectWithLinkToPage(props) {
+    const projectId = props.projectId
+    const [project, setProject] = useState(undefined);
 
-    const location = useLocation();
+    const fetchProject = () => fetch(HOST_ADDRESS + '/projects/by-id/' + projectId, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+    }).then((response) => {
+
+            let json = response.json();
+            json.then(data => setProject(data));
+        }
+    ).catch(error => console.log(`an error occurred ${error}`));
+
+   if(project === undefined) {
+      fetchProject();
+   }
 
     return (
         <div>
-            <h2>{location.projectId}</h2>
-            <CreateProjectForm/>
-            <br/>
-            <UpdateProjectForm/>
-            <br/>
-            <ProjectById/>
-            <br/>
-            <DeleteProject/>
-            <br/>
+            <li><Link to={`project/${projectId}`}> Project name : {project?.name} </Link></li>
+        </div>
+    )
+
+}
+
+export function ProjectsPage() {
+
+
+    return (
+        <Switch>
+
+
+        <div>
+            <ProjectWithLinkToPage projectId={"PR_4"}/>
+            {/*<h2>{location.projectId}</h2>*/}
+            {/*<CreateProjectForm/>*/}
+            {/*<br/>*/}
+            {/*<UpdateProjectForm/>*/}
+            {/*<br/>*/}
+            {/*<ProjectById/>*/}
+            {/*<br/>*/}
+            {/*<DeleteProject/>*/}i
+            {/*<br/>*/}
             <ProjectsByUserId/>
         </div>
+            <Route path="project/:projectId"  component={ProjectPage}/>
+        </Switch>
     );
 }
