@@ -2,8 +2,8 @@ import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import {createProject, deleteProject, updateProject} from "../rest-service/ProjectService";
 import {HOST_ADDRESS} from '../constants/consts'
-import {Switch, useLocation} from "react-router";
-import {Link, Route} from "react-router-dom";
+import {Route, Switch} from "react-router";
+import {Link} from "react-router-dom";
 import {ProjectPage} from "./ProjectPage";
 
 function CreateProjectForm() {
@@ -110,13 +110,22 @@ function ProjectsByUserId() {
             'Access-Control-Allow-Origin': '*',
 
         },
-    }).then((response) => response.json())
-        .then(data => {
-            console.log(data);
-            setProjects(JSON.stringify(data.content));
-        })
-        .catch(error => console.log(`an error occurred ${error}`));
+    }).then((response) => {
 
+            let json = response.json();
+            json.then(data => setProjects(data.content));
+        }
+    ).catch(error => console.log(`an error occurred ${error}`));
+
+
+    const projectList = [];
+
+    for (let project of projects) {
+        console.log(` looping on projects  ${JSON.stringify(project)}`);
+        projectList.push(
+            <ProjectWithLinkToPage projectId={project.id}/>
+        )
+    }
 
     return (
         <div>
@@ -124,9 +133,10 @@ function ProjectsByUserId() {
             <input type={'text'} name={"projectId"} onChange={(e) => setUserId(e.target.value)}/>
             <button onClick={fetchProject}>Get</button>
             <h5>Projects by User: {userId}</h5>
-            <ul>
-                {projects}
-            </ul>
+
+            {console.log(projectList)}
+            {projects ? projectList : ""}
+
         </div>
     );
 }
@@ -149,13 +159,16 @@ function ProjectWithLinkToPage(props) {
         }
     ).catch(error => console.log(`an error occurred ${error}`));
 
-   if(project === undefined) {
-      fetchProject();
-   }
+    if (project === undefined) {
+        fetchProject();
+    }
 
     return (
         <div>
-            <li><Link to={`project/${projectId}`}> Project name : {project?.name} </Link></li>
+            <li><Link to={{
+                pathname: `/project`,
+                project: project
+            }}> Project name : {project?.name} </Link></li>
         </div>
     )
 
@@ -165,23 +178,15 @@ export function ProjectsPage() {
 
 
     return (
-        <Switch>
-
-
         <div>
-            <ProjectWithLinkToPage projectId={"PR_4"}/>
-            {/*<h2>{location.projectId}</h2>*/}
-            {/*<CreateProjectForm/>*/}
-            {/*<br/>*/}
-            {/*<UpdateProjectForm/>*/}
-            {/*<br/>*/}
-            {/*<ProjectById/>*/}
-            {/*<br/>*/}
-            {/*<DeleteProject/>*/}i
-            {/*<br/>*/}
-            <ProjectsByUserId/>
-        </div>
-            <Route path="project/:projectId"  component={ProjectPage}/>
-        </Switch>
+
+
+
+                <ProjectsByUserId/>
+                <ProjectWithLinkToPage projectId={"PR_4"}/>
+
+
+
+          </div>
     );
 }

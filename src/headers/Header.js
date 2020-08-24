@@ -9,14 +9,10 @@ export function Header() {
                     <li><Link to='/'>Home</Link></li>
                     <li><Link to='/login'>Log in</Link></li>
                     <li><Link to={ {
-                            pathname: '/projects',
-                            projectId: 2
+                            pathname: '/browse',
+                            // projectId: 2
                         }
-                    }> Project Page</Link></li>
-                    <li><Link to='/sprints'> Sprints Page</Link></li>
-                    <li><Link to='/tasks'> Tasks Page</Link></li>
-                    <li><Link to='/comments'> Comments Page</Link></li>
-
+                    }> Browse projects</Link></li>
                 </ul>
             </nav>
         </header>
