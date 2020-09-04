@@ -75,7 +75,7 @@ function ProjectsOfUser(props) {
     }, [userId, isFetched]);
 
     return (
-        <div>
+        <div style={{ display : 'inline-block'}}>
             {projects.map(item => <TasksOfUserInProject key={item.id} userId={userId} project={item}/>)}
         </div>
     );
@@ -102,18 +102,16 @@ function TasksOfUserInProject(props) {
                 json.then(data => {
                     let content = data;
                     if (content[CREATED] && content[CREATED].length !== 0) {
-                        lists.push(content.created);
+                        lists.push({name : "Created", arr: content.created});
                     }
                     if (content[TODO] && content[TODO].length !== 0) {
-                        lists.push(content[TODO])
+                        lists.push({name: "To do", arr: content[TODO]});
                     }
                     if (content[IN_PROGRESS] && content[IN_PROGRESS].length !== 0) {
-
-                        lists.push(content[IN_PROGRESS])
+                        lists.push({name: "In Progress", arr: content[IN_PROGRESS]});
                     }
                     if (content[DONE] && content[DONE].length !== 0) {
-
-                        lists.push(content[DONE])
+                        lists.push({name: "Done", arr: content[DONE]});
                     }
                 });
             }
@@ -122,12 +120,26 @@ function TasksOfUserInProject(props) {
 
 
     return (
-        <div>
-
+        <div style={{
+            display : 'inline-block',
+            margin: '10px',
+            border: '1px solid #eee',
+            'boxShadow': '0 2px 2px #cccccc',
+            width: ' 300px',
+            padding: '20px'
+        }}>
+            <div><h4>{projectName}</h4> </div>
             {lists.map(item => (
-                <div><h4>{projectName}</h4>
-                    <TaskList key={projectId + userId + keyCounter++} listName={'list'}
-                              taskArray={item}/></div>))}
+                <div style={{
+                    display : 'inline-block',
+                    margin: '10px',
+                    border: '1px solid #eee',
+                    'boxShadow': '0 2px 2px #cccccc',
+                    width: ' 200px',
+                    padding: '20px'
+                }}>
+                    <TaskList key={projectId + userId + keyCounter++} listName={item.name}
+                              taskArray={item.arr}/></div>))}
 
         </div>
     );
