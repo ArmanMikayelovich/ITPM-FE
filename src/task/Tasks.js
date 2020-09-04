@@ -1,6 +1,7 @@
 import {useForm} from "react-hook-form";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {HOST_ADDRESS} from "../constants/consts";
+import {Link} from "react-router-dom";
 
 
 function CreateSprintForm() {
@@ -253,6 +254,70 @@ export function TasksPage() {
             <br/>
             <AttachToUserForm/>
             <br/>
+        </div>
+    );
+}
+
+export function TaskWithLinkToPage(props) {
+    const task = props.task;
+
+    return (
+        <div>
+            <li key={task.id}><Link to={{
+                pathname: `/task`,
+                task: task
+            }}> Task : {task.name} . Type: {task.taskType} </Link></li>
+        </div>
+    )
+}
+
+export function TaskList(props) {
+    const sprintId = props.sprintId;
+    const taskState = props.taskState;
+    const listName = props.listName;
+    const [tasks, setTasks] =
+        useState([]);
+
+    useEffect(() => {
+        if (props.taskArray !== null && props.taskArray !== undefined && props.taskArray.length !== 0) {
+            console.log(`TASKS ARE ${JSON.stringify(props.taskArray)}`);
+            let arrayOfElements = props.taskArray.map(task => <TaskWithLinkToPage task={task}/>);
+
+            setTasks(arrayOfElements);
+        } else {
+            fetch(HOST_ADDRESS + '/tasks/by-sprint/' + sprintId + "?taskState=" + taskState, {
+                method: 'GET',
+                mode: 'cors',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+
+                },
+            }).then((response) => {
+
+                    let json = response.json();
+                    json.then(data => {
+                        let taskList = data.map(task => <TaskWithLinkToPage key={task.id} task={task}/>)
+                        setTasks(taskList);
+                    });
+                }
+            ).catch(error => console.log(`an error occurred ${error}`));
+        }
+
+    }, [sprintId, taskState])
+
+    return (
+        <div style={{
+            display: "inline-block",
+            'marginRight': '10px'
+        }}>
+
+                <ul>{listName}
+                    {tasks}
+                </ul>
+
+
         </div>
     );
 }

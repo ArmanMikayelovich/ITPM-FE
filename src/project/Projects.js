@@ -2,9 +2,7 @@ import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import {createProject, deleteProject, updateProject} from "../rest-service/ProjectService";
 import {HOST_ADDRESS} from '../constants/consts'
-import {Route, Switch} from "react-router";
 import {Link} from "react-router-dom";
-import {ProjectPage} from "./ProjectPage";
 
 function CreateProjectForm() {
 
@@ -174,14 +172,11 @@ function ProjectWithLinkToPage(props) {
 
 }
 
-export function ProjectsPage() {
+export function BrowseProjects() {
 
 
     return (
         <div>
-
-
-
                 <ProjectsByUserId/>
                 <ProjectWithLinkToPage projectId={"PR_4"}/>
 

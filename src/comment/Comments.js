@@ -1,7 +1,9 @@
 import {HOST_ADDRESS} from "../constants/consts";
 import {useForm} from "react-hook-form";
-import React, {useState} from "react";
+import React, {useLayoutEffect, useState} from "react";
+import {UserFullNameWithLinkToPage} from "../user/UserInfo";
 
+// import {comment} from 'comments.css'
 function CreateCommentForm() {
 
     const sendComment = (data) => {
@@ -199,6 +201,57 @@ function DeleteComment() {
     );
 }
 
+export function CommentList(props) {
+    const taskId = props.taskId;
+    const name = props.name;
+    const [comments, setComments] = useState();
+    useLayoutEffect(() => {
+        fetch(HOST_ADDRESS + `/tasks/${taskId}/comments`, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+        }).then((response) => {
+                let json = response.json();
+                json.then(data => {
+                    let content = data.content;
+                    let list = content.map(comment => <Comment key={comment.id} comment={comment}/>)
+                    setComments(list);
+                });
+            }
+        ).catch(error => console.log(`an error occurred ${error}`));
+    }, [taskId])
+
+
+    return (
+        <div>
+
+                <ul>{name}
+                    {comments}
+                </ul>
+
+        </div>
+    )
+}
+
+export function Comment(props) {
+    const comment = props.comment
+    return (
+        <div style={{
+            margin: '10px',
+            border: '1px solid #eee',
+            'box-shadow': '0 2px 2px #cccccc',
+            width: ' 500px',
+            padding: '20px'
+        }}>
+            <div style={{float: "right"}}>{comment.createdAt}</div>
+            <h5><UserFullNameWithLinkToPage userId={comment.publisherId}/></h5>
+            <p>{comment.text}</p>
+        </div>
+    );
+}
 
 export function CommentsPage() {
     return (

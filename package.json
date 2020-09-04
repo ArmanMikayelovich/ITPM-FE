@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-react-jsx": "^7.10.4",
-    "eslint-plugin-react-hooks": "^4.0.8"
+    "eslint-plugin-react-hooks": "^4.0.8",
+    "style-loader": "^1.2.1"
   }
 }

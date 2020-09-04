@@ -1,6 +1,6 @@
 import React, {useLayoutEffect, useState} from "react";
 import {useLocation} from "react-router";
-import {UserFullName} from "../user/UserInfo";
+import {UserFullNameWithLinkToPage} from "../user/UserInfo";
 import {
     HOST_ADDRESS,
     LIST_DONE,
@@ -10,6 +10,7 @@ import {
     TASK_IN_PROGRESS,
     TASK_TODO
 } from "../constants/consts";
+import {TaskList} from "../task/Tasks";
 
 export function ProjectPage() {
 
@@ -22,13 +23,13 @@ export function ProjectPage() {
             <h3 style={{float: 'left'}}>{project?.name}</h3>
             <h3>Created at : {project.createdAt}</h3>
             <div style={{float: 'right'}}>
-                <h4>{"Owner"}<UserFullName userId={project?.publisherId}/></h4>
+                <h4>{"Owner"}<UserFullNameWithLinkToPage userId={project?.publisherId}/></h4>
                 <UsersInProjectList projectId={project.id}/>
             </div>
 
             <br/>
 
-            <Board projectId={project.id} />
+            <Board projectId={project.id}/>
         </div>
     );
 }
@@ -61,7 +62,7 @@ function Board(props) {
     }, [projectId])
 
 
-    if(!sprint) {
+    if (!sprint) {
         return (
             <div><h4>You haven't started a sprint</h4></div>
         )
@@ -69,9 +70,9 @@ function Board(props) {
 
     return (
         <div>
-            <TaskList sprintId={sprint.id} taskState={TASK_TODO} listType={LIST_TODO}/>
-            <TaskList sprintId={sprint.id} taskState={TASK_IN_PROGRESS} listType={LIST_IN_PROGRESS}/>
-            <TaskList sprintId={sprint.id} taskState={TASK_DONE} listType={LIST_DONE}/>
+            <TaskList sprintId={sprint.id} taskState={TASK_TODO} listName={LIST_TODO}/>
+            <TaskList sprintId={sprint.id} taskState={TASK_IN_PROGRESS} listName={LIST_IN_PROGRESS}/>
+            <TaskList sprintId={sprint.id} taskState={TASK_DONE} listName={LIST_DONE}/>
         </div>
     )
 }
@@ -96,7 +97,7 @@ function UsersInProjectList(props) {
                 let json = response.json();
                 json.then(data => {
                     let content = data.content;
-                    let userList = content.map(user => <li>{user.firstName + " " + user.lastName + " : " + user.role}</li>)
+                    let userList = content.map(user => <li key={user.userId}>{user.firstName + " " + user.lastName + " : " + user.role}</li>)
 
                     setUsers(userList);
                 });
@@ -108,53 +109,12 @@ function UsersInProjectList(props) {
 
     return (
         <div>
-            <hx> Users in Project
-                <ul>
+
+                <ul>Users in Project
                     {users}
-                </ul></hx>
+                </ul>
         </div>
 
     )
 }
 
-function TaskList(props) {
-    const sprintId = props.sprintId;
-    const taskState = props.taskState;
-    const listType = props.listType;
-    const [tasks, setTasks] = useState([]);
-
-    useLayoutEffect(() => {
-        fetch(HOST_ADDRESS + '/tasks/by-sprint/' + sprintId + "?taskState=" + taskState, {
-            method: 'GET',
-            mode: 'cors',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-
-            },
-        }).then((response) => {
-
-                let json = response.json();
-                json.then(data => {
-                    let taskList = data.map(task => <li key={task.id}>{task.name + " " + task.taskType}</li>)
-                    setTasks(taskList);
-                });
-            }
-        ).catch(error => console.log(`an error occurred ${error}`));
-    }, [sprintId, taskState])
-
-    return (
-        <div style={{
-            display: "inline-block",
-            'margin-right': '10px'
-        }}>
-            <hx>{listType}
-                <ul>
-                    {tasks}
-                </ul>
-            </hx>
-
-        </div>
-    );
-}
