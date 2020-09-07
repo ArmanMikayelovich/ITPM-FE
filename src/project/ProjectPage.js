@@ -1,6 +1,6 @@
-import React, {useLayoutEffect, useState} from "react";
-import {useLocation} from "react-router";
-import {UserFullNameWithLinkToPage} from "../user/UserInfo";
+import React, {useEffect, useState} from "react";
+import {useHistory, useLocation} from "react-router";
+import {getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
 import {
     HOST_ADDRESS,
     LIST_DONE,
@@ -11,17 +11,46 @@ import {
     TASK_TODO
 } from "../constants/consts";
 import {TaskList} from "../task/Tasks";
+import {UpdateProjectForm} from "./Projects";
 
 export function ProjectPage() {
 
     const location = useLocation()
 
-    const project = location.project
+    const [project, setProject] = useState(location.project);
+    const updatePage = (id) => {
+        fetch(HOST_ADDRESS + '/projects/by-id/' + id, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+        }).then((response) => {
+                if (response.status === 200) {
+                    let json = response.json();
+                    json.then(data => setProject(data));
+                } else {
+                    console.log("An error occurred on updating project page.")
+                }
+            }
+        ).catch(error => console.log(`an error occurred ${error}`));
+    }
+
 
     return (
         <div>
             <h3 style={{float: 'left'}}>{project?.name}</h3>
-            <h3>Created at : {project.createdAt}</h3>
+            <h3>Created at :{project.createdAt}</h3>
+            <div style={{
+                margin: '10px',
+                border: '1px solid #eee',
+                'boxShadow': '0 2px 2px #B22222',
+                width: ' 200px',
+                height: "300",
+                padding: '20px'
+            }}><h4>Description</h4>
+                <p>{project.description}</p></div>
             <div style={{float: 'right'}}>
                 <h4>{"Owner"}<UserFullNameWithLinkToPage userId={project?.publisherId}/></h4>
                 <UsersInProjectList projectId={project.id}/>
@@ -30,6 +59,23 @@ export function ProjectPage() {
             <br/>
 
             <Board projectId={project.id}/>
+            <br/>
+            {project.publisherId === getUserId().toString(10) &&
+            <div style={{
+                float: "right",
+                margin: '10px',
+                border: '1px solid #eee',
+                'boxShadow': '0 2px 2px #B22222',
+                width: ' 200px',
+                padding: '20px'
+            }}>
+                <UpdateProjectForm updateProject={updatePage} project={project}/>
+                <br/>
+                <div style={{float: "right"}}>
+                    <DeleteProject projectId={project.id}/>
+
+                </div>
+            </div>}
         </div>
     );
 }
@@ -38,7 +84,7 @@ function Board(props) {
     const projectId = props.projectId;
     const [sprint, setSprint] = useState(null);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         fetch(HOST_ADDRESS + `/sprints/by-project/${projectId}/active`, {
             method: 'GET',
             mode: 'cors',
@@ -82,7 +128,7 @@ function UsersInProjectList(props) {
 
     const [users, setUsers] = useState([]);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         fetch(HOST_ADDRESS + '/users/by-project/' + projectId, {
             method: 'GET',
             mode: 'cors',
@@ -97,7 +143,12 @@ function UsersInProjectList(props) {
                 let json = response.json();
                 json.then(data => {
                     let content = data.content;
-                    let userList = content.map(user => <li key={user.userId}>{user.firstName + " " + user.lastName + " : " + user.role}</li>)
+                    let userList = content.map(user => <div>
+                            <br/>
+                            <UserFullNameWithLinkToPage userId={user.id}/>
+                            role: {user.role}
+                        </div>
+                    )
 
                     setUsers(userList);
                 });
@@ -110,11 +161,46 @@ function UsersInProjectList(props) {
     return (
         <div>
 
-                <ul>Users in Project
-                    {users}
-                </ul>
+            <ul>Users in Project
+                {users}
+            </ul>
         </div>
 
     )
 }
 
+
+function DeleteProject(props) {
+
+    const history = useHistory();
+    const projectId = props.projectId;
+
+    const removeProject = (projectId) => {
+        fetch(HOST_ADDRESS + '/projects/' + projectId, {
+            method: 'DELETE',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+
+            },
+        })
+            .then((response) => {
+                    if (response.status === 200) {
+                        history.push('/browse');
+                    } else {
+                        console.log(`Project ${projectId} deleting: status - ${response.status}`);
+                        return response;
+                    }
+                }
+            )
+
+            .catch(error => console.log(`an error occurred ${error}`));
+    }
+
+    return (
+        <div>
+            <button onClick={() => removeProject(projectId)}>Delete Project!</button>
+
+        </div>
+    );
+}

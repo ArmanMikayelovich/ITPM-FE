@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {UserFullName} from "./UserInfo";
 import {useLocation} from "react-router";
 import {HOST_ADDRESS} from "../constants/consts";
@@ -49,7 +49,7 @@ function ProjectsOfUser(props) {
     const userId = props.userId;
     const [projects, setProjects] = useState([]);
     let [isFetched, setIsFetched] = useState(false);
-    useLayoutEffect(() => {
+    useEffect(() => {
         fetch(HOST_ADDRESS + `/projects/by-user/${userId}`, {
             method: 'GET',
             mode: 'cors',
@@ -75,7 +75,7 @@ function ProjectsOfUser(props) {
     }, [userId, isFetched]);
 
     return (
-        <div style={{ display : 'inline-block'}}>
+        <div style={{display: 'inline-block'}}>
             {projects.map(item => <TasksOfUserInProject key={item.id} userId={userId} project={item}/>)}
         </div>
     );
@@ -88,7 +88,7 @@ function TasksOfUserInProject(props) {
     let keyCounter = 0;
 
     const [lists, setLists] = useState([]);
-    useLayoutEffect(() => {
+    useEffect(() => {
         fetch(HOST_ADDRESS + `/users/${userId}/projects/${projectId}/tasks`, {
             method: 'GET',
             mode: 'cors',
@@ -102,7 +102,7 @@ function TasksOfUserInProject(props) {
                 json.then(data => {
                     let content = data;
                     if (content[CREATED] && content[CREATED].length !== 0) {
-                        lists.push({name : "Created", arr: content.created});
+                        lists.push({name: "Created", arr: content.created});
                     }
                     if (content[TODO] && content[TODO].length !== 0) {
                         lists.push({name: "To do", arr: content[TODO]});
@@ -121,17 +121,17 @@ function TasksOfUserInProject(props) {
 
     return (
         <div style={{
-            display : 'inline-block',
+            display: 'inline-block',
             margin: '10px',
             border: '1px solid #eee',
             'boxShadow': '0 2px 2px #cccccc',
             width: ' 300px',
             padding: '20px'
         }}>
-            <div><h4>{projectName}</h4> </div>
+            <div><h4>{projectName}</h4></div>
             {lists.map(item => (
-                <div style={{
-                    display : 'inline-block',
+                <div key={projectId + userId + keyCounter++} style={{
+                    display: 'inline-block',
                     margin: '10px',
                     border: '1px solid #eee',
                     'boxShadow': '0 2px 2px #cccccc',

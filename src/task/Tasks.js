@@ -1,7 +1,7 @@
 import {useForm} from "react-hook-form";
 import React, {useEffect, useState} from "react";
 import {HOST_ADDRESS} from "../constants/consts";
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 
 
 function CreateSprintForm() {
@@ -160,7 +160,9 @@ function TaskById() {
 }
 
 
-function DeleteTask() {
+export function DeleteTask(props) {
+    const taskId = props.taskId
+    const history = useHistory();
     const deleteTask = (taskId) => {
         fetch(HOST_ADDRESS + '/tasks/' + taskId, {
             method: 'DELETE',
@@ -173,7 +175,7 @@ function DeleteTask() {
             .then((response) => {
                     if (response.status === 200) {
                         console.log(`Task ${taskId} deleting: status - ${response.status}`);
-                        return response;
+                        history.push("/browse");
                     } else {
                         console.log(`An error occurred. Task ${taskId} deleting: status - ${response.status}`);
                     }
@@ -182,12 +184,9 @@ function DeleteTask() {
 
             .catch(error => console.log(`an error occurred ${error}`));
     }
-    const [taskId, setTaskId] = useState();
     return (
         <div>
-            Delete Project <br/>
-            <input type={'text'} name={"projectId"} onChange={(e) => setTaskId(e.target.value)}/>
-            <button onClick={() => deleteTask(taskId)}>Get</button>
+            <button onClick={() => deleteTask(taskId)}>Delete Task: {taskId}</button>
 
         </div>
     );
@@ -281,7 +280,7 @@ export function TaskList(props) {
     useEffect(() => {
         if (props.taskArray !== null && props.taskArray !== undefined && props.taskArray.length !== 0) {
             console.log(`TASKS ARE ${JSON.stringify(props.taskArray)}`);
-            let arrayOfElements = props.taskArray.map(task => <TaskWithLinkToPage task={task}/>);
+            let arrayOfElements = props.taskArray.map(task => <TaskWithLinkToPage key={task.id} task={task}/>);
 
             setTasks(arrayOfElements);
         } else {
@@ -313,9 +312,9 @@ export function TaskList(props) {
             'marginRight': '10px'
         }}>
 
-                <ul>{listName}
-                    {tasks}
-                </ul>
+            <ul>{listName}
+                {tasks}
+            </ul>
 
 
         </div>

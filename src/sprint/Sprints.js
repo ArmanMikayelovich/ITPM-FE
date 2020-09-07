@@ -3,7 +3,6 @@ import React, {useState} from "react";
 import {HOST_ADDRESS} from "../constants/consts";
 
 
-
 function CreateSprintForm() {
 
     const sendSprint = (data) => {
@@ -109,8 +108,10 @@ function SprintsByProjectId() {
             'Access-Control-Allow-Origin': '*'
         },
     }).then((response) => response.json())
-        .then(data =>{ console.log(data);
-            setSprints(JSON.stringify(data.content));})
+        .then(data => {
+            console.log(data);
+            setSprints(JSON.stringify(data.content));
+        })
         .catch(error => console.log(`an error occurred ${error}`));
 
 

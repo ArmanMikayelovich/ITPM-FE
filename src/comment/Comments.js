@@ -1,11 +1,12 @@
 import {HOST_ADDRESS} from "../constants/consts";
 import {useForm} from "react-hook-form";
-import React, {useLayoutEffect, useState} from "react";
-import {UserFullNameWithLinkToPage} from "../user/UserInfo";
+import React, {useEffect, useState} from "react";
+import {getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
 
 // import {comment} from 'comments.css'
-function CreateCommentForm() {
-
+export function CreateCommentForm(props) {
+    const taskId = props.taskId;
+    const updateTask = props.updatePage;
     const sendComment = (data) => {
         fetch(HOST_ADDRESS + '/tasks/' + data.taskId + "/comments", {
             method: 'POST',
@@ -19,7 +20,7 @@ function CreateCommentForm() {
             .then((response) => {
                     if (response.status === 200) {
                         console.log(`Comment successfully created ${JSON.stringify(data)}`);
-
+                        updateTask();
                     } else {
                         response.json().then(data =>
                             console.log(`Fail to save Comment. error: code - ${data.status} message: ${data.message}`))
@@ -35,16 +36,24 @@ function CreateCommentForm() {
     const onSubmit = (data) => sendComment(data)
 
     return (
-        <div>
-            <h3>Create Comment</h3>
+        <div style={{
+            margin: '10px',
+            border: '1px solid #eee',
+            'box-shadow': '0 2px 2px #cccccc',
+            width: ' 500px',
+            padding: '20px'
+        }}>
+            <h3>Add Comment</h3>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <input type='text' placeholder={"Publisher id"} name='publisherId' ref={register}/>
+                <input hidden={true} type='text' defaultValue={getUserId()}
+                       name='publisherId' ref={register}/>
+                <input hidden={true} type='text' name='taskId' defaultValue={taskId} ref={register}/>
+                <p>Add comment <br/>
+                    <input type='textarea' aria-multiline={true} name='text' placeholder={"Comment text"}
+                           ref={register}/>
+                </p>
                 <br/>
-                <input type='text' name='taskId' placeholder={"Task id"} ref={register}/>
-                <br/>
-                <input type='textarea' name='text' placeholder={"Text"} ref={register}/>
-                <br/>
-                <input type='submit'/>
+                <input value={"Ddd comment"} type='submit'/>
             </form>
         </div>
     );
@@ -202,10 +211,11 @@ function DeleteComment() {
 }
 
 export function CommentList(props) {
-    const taskId = props.taskId;
+    const task = props.task;
+    const taskId = task.id;
     const name = props.name;
     const [comments, setComments] = useState();
-    useLayoutEffect(() => {
+    useEffect(() => {
         fetch(HOST_ADDRESS + `/tasks/${taskId}/comments`, {
             method: 'GET',
             mode: 'cors',
@@ -222,15 +232,15 @@ export function CommentList(props) {
                 });
             }
         ).catch(error => console.log(`an error occurred ${error}`));
-    }, [taskId])
+    }, [task])
 
 
     return (
         <div>
 
-                <ul>{name}
-                    {comments}
-                </ul>
+            <ul>{name}
+                {comments}
+            </ul>
 
         </div>
     )

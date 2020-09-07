@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useState} from "react";
+import React, {useEffect, useLayoutEffect, useState} from "react";
 import {HOST_ADDRESS} from "../constants/consts";
 import {Link} from "react-router-dom";
 
@@ -15,7 +15,7 @@ export function UserFullNameWithLinkToPage(props) {
     const [user, setUser] = useState({});
 
 
-    useLayoutEffect(() => {
+    useEffect(() => {
 
         fetch(HOST_ADDRESS + '/users/' + userId, {
             method: 'GET',
@@ -52,7 +52,7 @@ export function UserFullName(props) {
     const [fullName, setFullName] = useState("");
 
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (props.user) {
             setFullName(props.user.firstName + " " + props.user.lastName)
         } else {

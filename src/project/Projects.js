@@ -1,8 +1,9 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import {createProject, deleteProject, updateProject} from "../rest-service/ProjectService";
+import {createProject} from "../rest-service/ProjectService";
 import {HOST_ADDRESS} from '../constants/consts'
 import {Link} from "react-router-dom";
+import {getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
 
 function CreateProjectForm() {
 
@@ -29,9 +30,34 @@ function CreateProjectForm() {
     );
 }
 
-function UpdateProjectForm() {
-    const {register, handleSubmit} = useForm();
+export function UpdateProjectForm(props) {
+    const project = props.project;
 
+    const {register, handleSubmit} = useForm();
+    const updatePage = props.updateProject;
+
+    const updateProject = (data) => {
+        fetch(HOST_ADDRESS + '/projects', {
+            method: 'PUT',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+
+            },
+            body: JSON.stringify(data)
+        })
+            .then((response) => {
+                    if (response.status === 200) {
+                        console.log(`Project successfully updated ${JSON.stringify(data)}`);
+                        updatePage(data.id);
+                    } else {
+                        response.json().then(data => console.log(`Error in updating project: code - ${data.status} message: ${data.message}`))
+                    }
+                }
+            )
+
+            .catch(error => console.log(`an error occurred ${error}`));
+    }
     const onSubmit = (data) => updateProject(data)
 
     return (
@@ -39,15 +65,24 @@ function UpdateProjectForm() {
         <div>
             <h3>Update Project</h3>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <legend> Input Project Id for update
-                    <input type='text' placeholder={"Project id"} name='id' ref={register}/>
-                </legend>
+
+                <input hidden={true} type='text' name='id' ref={register} readOnly={true} value={project.id}/>
+                <input hidden={true} type='text' name='publisherId' ref={register} readOnly={true}
+                       value={project.publisherId}/>
+
                 <br/>
-                <input type='text' name='name' placeholder={"Project name"} ref={register}/>
+                <p> Name
+                    <input type='text' name='name' placeholder={"Project name"} defaultValue={project.name}
+                           ref={register}/>
+                    <br/>
+                </p>
+                <p>
+                    Description
+                    <input type='text' name="description" placeholder={"Description"}
+                           defaultValue={project.description} ref={register}/>
+                </p>
                 <br/>
-                <input type='text' name="description" placeholder={"Description"} ref={register}/>
-                <br/>
-                <input type='submit'/>
+                <input type='submit' readOnly={true} value={"Update project"}/>
             </form>
         </div>
     );
@@ -83,53 +118,40 @@ function ProjectById() {
     );
 }
 
-function DeleteProject() {
-    const [projectId, setProjectId] = useState();
-    return (
-        <div>
-            Delete Project <br/>
-            <input type={'text'} name={"projectId"} onChange={(e) => setProjectId(e.target.value)}/>
-            <button onClick={() => deleteProject(projectId)}>Get</button>
 
-        </div>
-    );
-}
-
-function ProjectsByUserId() {
-    const [userId, setUserId] = useState("");
+function ProjectsByUserId(props) {
+    const userId = props.userId;
     const [projects, setProjects] = useState("");
+    useEffect(() => {
+        fetch(HOST_ADDRESS + '/projects/by-user/' + userId, {
+            method: 'GET',
+            mode: 'cors',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
 
-    const fetchProject = () => fetch(HOST_ADDRESS + '/projects/by-user/' + userId, {
-        method: 'GET',
-        mode: 'cors',
-        credentials: 'include',
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
+            },
+        }).then((response) => {
 
-        },
-    }).then((response) => {
+                let json = response.json();
+                json.then(data => setProjects(data.content));
+            }
+        ).catch(error => console.log(`an error occurred ${error}`));
 
-            let json = response.json();
-            json.then(data => setProjects(data.content));
-        }
-    ).catch(error => console.log(`an error occurred ${error}`));
+    }, [userId]);
 
 
     const projectList = [];
 
     for (let project of projects) {
-        console.log(` looping on projects  ${JSON.stringify(project)}`);
         projectList.push(
-            <ProjectWithLinkToPage projectId={project.id}/>
+            <ProjectWithLinkToPage key={project.id} projectId={project.id}/>
         )
     }
 
     return (
         <div>
-            Get Projects By User id <br/>
-            <input type={'text'} name={"projectId"} onChange={(e) => setUserId(e.target.value)}/>
-            <button onClick={fetchProject}>Get</button>
             <h5>Projects by User: {userId}</h5>
 
             {console.log(projectList)}
@@ -177,11 +199,8 @@ export function BrowseProjects() {
 
     return (
         <div>
-                <ProjectsByUserId/>
-                <ProjectWithLinkToPage projectId={"PR_4"}/>
-
-
-
-          </div>
+           User: <UserFullNameWithLinkToPage userId={getUserId()}/>
+            <ProjectsByUserId userId={getUserId()}/>
+        </div>
     );
 }
