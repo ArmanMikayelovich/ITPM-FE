@@ -52,7 +52,7 @@ export function ProjectPage() {
             }}><h4>Description</h4>
                 <p>{project.description}</p></div>
             <div style={{float: 'right'}}>
-                <h4>{"Owner"}<UserFullNameWithLinkToPage userId={project?.publisherId}/></h4>
+                <h4>{"Owner"}<UserFullNameWithLinkToPage userId={project?.creatorId}/></h4>
                 <UsersInProjectList projectId={project.id}/>
             </div>
 
@@ -143,9 +143,9 @@ function UsersInProjectList(props) {
                 let json = response.json();
                 json.then(data => {
                     let content = data.content;
-                    let userList = content.map(user => <div>
+                    let userList = content.map(user => <div key={user.id}>
                             <br/>
-                            <UserFullNameWithLinkToPage userId={user.id}/>
+                            <UserFullNameWithLinkToPage userId={user.userId}/>
                             role: {user.role}
                         </div>
                     )

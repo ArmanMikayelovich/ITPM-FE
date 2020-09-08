@@ -3,13 +3,16 @@ import {useLocation} from "react-router";
 import {getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
 import {HOST_ADDRESS} from "../constants/consts";
 import {CommentList, CreateCommentForm} from "../comment/Comments";
-import {useForm} from "react-hook-form";
 import {DeleteTask} from "./Tasks";
+import {UpdateTask} from "./UpdateTask";
+import {ChangeTaskState} from "./ChangeTaskState";
+import {ChangeTaskPriority} from "./ChangePriority";
 
 export function TaskPage() {
     let location = useLocation();
     const [task, setTask] = useState(location.task);
-    const updateTask = () => {
+
+    const reRenderPage = () => {
         fetch(HOST_ADDRESS + '/tasks/' + task.id, {
             method: 'GET',
             mode: 'cors',
@@ -40,7 +43,7 @@ export function TaskPage() {
                     width: ' 200px',
                     padding: '20px'
                 }}>
-                    <h4 style={{float: 'right', 'border-right': '30px solid transparent'}}> Creator:<br/>
+                    <h4 style={{float: 'right', 'borderRight': '30px solid transparent'}}> Creator:<br/>
                         <UserFullNameWithLinkToPage
                             userId={task.creatorId}/></h4>
                     <AssignedUserWithAssignToMeButton task={task}/>
@@ -58,6 +61,7 @@ export function TaskPage() {
                 }}>
                     <h5>Task Type: {task.taskType}</h5>
                     <h5>Task State: {task.taskState}</h5>
+                    <h5>Task Priority: {task.priority}</h5>
                 </div>
                 <div>
 
@@ -67,7 +71,17 @@ export function TaskPage() {
                         border: '3px solid green',
                         padding: '10px',
                     }}>
-                        <ChangeTaskState updatePage={updateTask} task={task}/>
+                        <ChangeTaskState updatePage={reRenderPage} task={task}/>
+                    </div>}
+
+                    {(task.assignedUserId === getUserId().toString() || task.creatorId === getUserId().toString())
+                    && <div style={{
+
+                        margin: 'auto',
+                        border: '3px solid green',
+                        padding: '10px',
+                    }}>
+                        <ChangeTaskPriority task={task} updatePage={reRenderPage}/>
                     </div>}
 
                     {task.creatorId === getUserId().toString() && <div style={{
@@ -75,7 +89,7 @@ export function TaskPage() {
                         border: '3px solid green',
                         padding: '10px',
                     }}>
-                        <UpdateTask updatePage={updateTask} task={task}/></div>
+                        <UpdateTask updatePage={reRenderPage} task={task}/></div>
                     }
 
                     {task.creatorId === getUserId().toString() && <div style={{
@@ -83,7 +97,7 @@ export function TaskPage() {
                         border: '3px solid red',
                         padding: '5px',
                     }}>
-                        <DeleteTask taskId={task.id} /></div>}
+                        <DeleteTask taskId={task.id}/></div>}
                 </div>
 
             </div>
@@ -98,7 +112,7 @@ export function TaskPage() {
 
             <div style={{float: 'center'}}>
                 <CommentList task={task} name={'All comments'}/>
-                <CreateCommentForm updatePage={updateTask} taskId={task.id}/>
+                <CreateCommentForm updatePage={reRenderPage} taskId={task.id}/>
             </div>
 
         </div>
@@ -153,125 +167,4 @@ function AssignedUserWithAssignToMeButton(props) {
     }
 
 
-}
-
-function ChangeTaskState(props) {
-    // TODO UPDATE page when changing any state
-    const task = props.task;
-
-    const updatePage = props.updatePage;
-    const {register, handleSubmit} = useForm();
-
-    const onSubmit = (data) => {
-        fetch(HOST_ADDRESS + '/tasks/change-state', {
-            method: 'PUT',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json'
-
-            },
-            body: JSON.stringify(data)
-        })
-            .then((response) => {
-                    if (response.status === 200) {
-                        console.log(`Task state updated ${JSON.stringify(data)}`);
-                        updatePage();
-                    } else {
-                        response.json().then(data => console.log(`Error in updating task state: code - ${data.status} message: ${data.message}`))
-                    }
-                }
-            )
-            .catch(error => console.log(`an error occurred ${error}`));
-
-    }
-
-    return (
-
-        <div>
-            <h3>Change Task State </h3>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <input hidden={true} type='text' name='id' ref={register} readOnly={true} value={task.id}/>
-                <p>
-                    Change state to
-                    <br/>
-                    <select defaultValue={'DONE'} ref={register} name={'taskState'}>
-                        <option value="TODO">To do</option>
-                        <option value="IN_PROGRESS">In progress</option>
-                        <option  value="DONE">Done</option>
-                    </select>
-                </p>
-                <br/>
-                <input type='submit' readOnly={true} value={"Change task state"}/>
-            </form>
-        </div>
-    )
-}
-
-function UpdateTask(props) {
-    const task = props.task;
-
-    const updatePage = props.updatePage;
-    const {register, handleSubmit} = useForm();
-    const onSubmit = (data) => {
-        fetch(HOST_ADDRESS + '/tasks', {
-            method: 'PUT',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json'
-
-            },
-            body: JSON.stringify(data)
-        })
-            .then((response) => {
-                    if (response.status === 200) {
-                        console.log(`Task updated ${JSON.stringify(data)}`);
-                        updatePage();
-                    } else {
-                        response.json().then(data => console.log(`Error in updating task state: code - ${data.status} message: ${data.message}`))
-                    }
-                }
-            )
-            .catch(error => console.log(`an error occurred ${error}`));
-
-    }
-
-    return (
-        <div>
-            <h3>Update Task </h3>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <input hidden={true} type='text' name='id' ref={register} readOnly={true} value={task.id}/>
-                <input hidden={true} type='text' name='assignedUserId' ref={register} readOnly={true}
-                       value={task.assignedUserId}/>
-                <input hidden={true} type='text' name='creatorId' ref={register} readOnly={true}
-                       value={task.creatorId}/>
-                <input hidden={true} type='text' name='springId' ref={register} readOnly={true} value={task.springId}/>
-                <input hidden={true} type='text' name='taskState' ref={register} readOnly={true}
-                       value={task.taskState}/>
-
-                <p>
-                    Task name:
-                    <br/>
-                    <input type={'text'} name={'name'} defaultValue={task.name} ref={register}/>
-                </p>
-                <p>
-                    Task description:
-                    <br/>
-                    <input type={'text'} name={'description'} defaultValue={task.description} ref={register}/>
-                </p>
-                <p>
-                    Task type:<br/>
-                    <select defaultValue={'TASK'} ref={register} name={'taskType'}>
-                        <option value="TASK">Task</option>
-                        <option value="SUBTASK">Sub task</option>
-                        <option value="EPIC">Epic</option>
-                        <option value="BUG">Bug</option>
-                        <option value="STORY">Story</option>
-                        <option value="CHANGE">Change</option>
-                    </select>
-                </p>
-                <br/>
-                <input type='submit' readOnly={true} value={"Change task state"}/>
-            </form>
-        </div>
-    )
 }
