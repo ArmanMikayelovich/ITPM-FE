@@ -1,13 +1,19 @@
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {HOST_ADDRESS} from "../constants/consts";
+import MultiSelect from "react-multi-select-component";
 
 export function UpdateTask(props) {
     const task = props.task;
     const [assigningUsers, setAssigningUsers] = useState();
     const [projectVersions, setProjectVersions] = useState();
+    const [projectVersionOptions, setProjectVersionOptions] = useState([]);
+    const [selectedProjectVersions, setSelectedProjectVersions] =
+        useState(task.affectedProjectVersions !== undefined ? task.affectedProjectVersions : []);
+
     const updatePage = props.updatePage;
     const {register, handleSubmit} = useForm();
+
     useEffect(() => {
         fetch(HOST_ADDRESS + `/users/by-project/${task.projectId}`, {
             method: 'GET',
@@ -16,51 +22,50 @@ export function UpdateTask(props) {
                 'Content-Type': 'application/json'
 
             },
+        }).then((response) => {
+            if (response.status === 200) {
+                let promise = response.json();
+                promise.then(data => {
+                    let mapped = data.content.map(user =>
+                        <option key={task.id + '' + user.userId}
+                                value={user.userId}>{user.firstName + " " + user.lastName}</option>
+                    );
+                    setAssigningUsers(mapped);
+                })
+            } else {
+                response.json().then(data => console.log(`Error in updating task state: 
+                        code - ${data.status} message: ${data.message}`))
+            }
         })
-            .then((response) => {
-                    if (response.status === 200) {
-                        let promise = response.json();
-                        promise.then(data => {
-                            let mapped = data.content.map(user =>
-                                <option key={task.id + '' + user.userId}
-                                        value={user.userId}>{user.firstName + " " + user.lastName}</option>
-                            );
-                            setAssigningUsers(mapped);
-                        })
-                    } else {
-                        response.json().then(data => console.log(`Error in updating task state: code - ${data.status} message: ${data.message}`))
-                    }
-                }
-            )
             .catch(error => console.log(`an error occurred ${error}`));
 
 
+        fetch(HOST_ADDRESS + `/projects/${task.projectId}/versions`, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
 
-    fetch(HOST_ADDRESS + `/projects/${task.projectId}/versions`, {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'application/json'
-
-        },
-    })
-        .then((response) => {
+            },
+        })
+            .then((response) => {
                 if (response.status === 200) {
                     let json = response.json();
                     json.then(data => {
                         let formattedVersions = data.map(version =>
-                            <option key={version.id} value={version.id}>{version.version}</option> )
+                            <option key={version.id} value={version.id}>{version.version}</option>)
                         setProjectVersions(formattedVersions);
-                    });
+                        let options = [];
+                        data.forEach(version => options.push({label: version.version, value: version.id}));
+                        setProjectVersionOptions(options);
+                    })
                 } else {
-                    response.json()
-                        .then(data => console.log(`Error in fetching project version: code - ${data.status} message: ${data.message}`))
+                    console.log("an error occurred on fetching project versions");
                 }
-            }
-        )
+            })
+            .catch(error => console.log(JSON.stringify(error)))
 
-        .catch(error => console.log(`an error occurred ${error}`));}
-    , [task])
+    }, [task])
 
     const onSubmit = (data) => {
         fetch(HOST_ADDRESS + '/tasks', {
@@ -70,7 +75,7 @@ export function UpdateTask(props) {
                 'Content-Type': 'application/json'
 
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(Object.assign(data, {affectedProjectVersions: parseSelectedOptionsToIds(selectedProjectVersions)}))
         })
             .then((response) => {
                     if (response.status === 200) {
@@ -137,8 +142,19 @@ export function UpdateTask(props) {
                     </select>
                 </p>
                 <br/>
+                <br/>
+                    <MultiSelect
+                        options={projectVersionOptions}
+                        value={selectedProjectVersions}
+                        onChange={setSelectedProjectVersions}
+                        labelledBy={"Select Affected versions"}
+                    />
                 <input type='submit' readOnly={true} value={"Change task state"}/>
             </form>
         </div>
     )
+}
+
+function parseSelectedOptionsToIds(options) {
+   return  options.map(item => item.value);
 }

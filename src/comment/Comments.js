@@ -39,7 +39,7 @@ export function CreateCommentForm(props) {
         <div style={{
             margin: '10px',
             border: '1px solid #eee',
-            'box-shadow': '0 2px 2px #cccccc',
+            'boxShadow': '0 2px 2px #cccccc',
             width: ' 500px',
             padding: '20px'
         }}>

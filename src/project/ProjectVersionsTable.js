@@ -49,9 +49,12 @@ export function ProjectVersionsTable(props) {
                     <th>status</th>
                     <th>Registration date</th>
                 </tr>
+                <tbody>
                 {versions}
-              </table>
+                </tbody>
+
+            </table>
         </div>
-)
+    )
 
 }

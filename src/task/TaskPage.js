@@ -32,7 +32,8 @@ export function TaskPage() {
 
 
     }
-    console.log(`task is : ${JSON.stringify(task)}`)
+
+
     return (
         <div>
             <h4 style={{float: 'left'}}>{task.name}</h4>
@@ -67,6 +68,9 @@ export function TaskPage() {
                     <h5>Task Priority: {task.priority}</h5>
                     <h4>Project :<ProjectWithLinkToPage projectId={task.projectId}/></h4>
                     <h5>Project version id : <ProjectVersion versionId={task.projectVersionId}/></h5>
+                    <ul>Affected Project versions
+                        {task.affectedProjectVersions.map(versionId => <ProjectVersion key={versionId} versionId={versionId} />)}
+                    </ul>
                 </div>
                 <div>
 
@@ -154,7 +158,7 @@ function AssignedUserWithAssignToMeButton(props) {
 
     if (task.assignedUserId !== "") {
         return (
-            <div style={{float: 'right', 'border-right': '30px solid transparent'}}><h4><br/> Assigned to: <br/>
+            <div style={{float: 'right', 'borderRight': '30px solid transparent'}}><h4><br/> Assigned to: <br/>
                 <UserFullNameWithLinkToPage userId={task.assignedUserId}/></h4>
             </div>
         )
