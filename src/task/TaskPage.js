@@ -7,6 +7,9 @@ import {DeleteTask} from "./Tasks";
 import {UpdateTask} from "./UpdateTask";
 import {ChangeTaskState} from "./ChangeTaskState";
 import {ChangeTaskPriority} from "./ChangePriority";
+import {ProjectWithLinkToPage} from "../project/Projects";
+import {ProjectVersion} from "../project/ProjectVersion";
+
 
 export function TaskPage() {
     let location = useLocation();
@@ -62,6 +65,8 @@ export function TaskPage() {
                     <h5>Task Type: {task.taskType}</h5>
                     <h5>Task State: {task.taskState}</h5>
                     <h5>Task Priority: {task.priority}</h5>
+                    <h4>Project :<ProjectWithLinkToPage projectId={task.projectId}/></h4>
+                    <h5>Project version id : <ProjectVersion versionId={task.projectVersionId}/></h5>
                 </div>
                 <div>
 
@@ -157,7 +162,6 @@ function AssignedUserWithAssignToMeButton(props) {
         return (
             <div style={{float: 'right', 'border-right': '30px solid transparent'}}>
                 <button onClick={() => {
-                    console.log("Clicked!");
                     setUser();
                 }}>Assign to Me!
                 </button>

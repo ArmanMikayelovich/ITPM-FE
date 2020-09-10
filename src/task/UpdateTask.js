@@ -5,6 +5,7 @@ import {HOST_ADDRESS} from "../constants/consts";
 export function UpdateTask(props) {
     const task = props.task;
     const [assigningUsers, setAssigningUsers] = useState();
+    const [projectVersions, setProjectVersions] = useState();
     const updatePage = props.updatePage;
     const {register, handleSubmit} = useForm();
     useEffect(() => {
@@ -32,7 +33,34 @@ export function UpdateTask(props) {
                 }
             )
             .catch(error => console.log(`an error occurred ${error}`));
-    }, [task])
+
+
+
+    fetch(HOST_ADDRESS + `/projects/${task.projectId}/versions`, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json'
+
+        },
+    })
+        .then((response) => {
+                if (response.status === 200) {
+                    let json = response.json();
+                    json.then(data => {
+                        let formattedVersions = data.map(version =>
+                            <option key={version.id} value={version.id}>{version.version}</option> )
+                        setProjectVersions(formattedVersions);
+                    });
+                } else {
+                    response.json()
+                        .then(data => console.log(`Error in fetching project version: code - ${data.status} message: ${data.message}`))
+                }
+            }
+        )
+
+        .catch(error => console.log(`an error occurred ${error}`));}
+    , [task])
 
     const onSubmit = (data) => {
         fetch(HOST_ADDRESS + '/tasks', {
@@ -93,6 +121,13 @@ export function UpdateTask(props) {
                         <option value="BUG">Bug</option>
                         <option value="STORY">Story</option>
                         <option value="CHANGE">Change</option>
+                    </select>
+                </p>
+
+                <p>
+                    Fix version
+                    <select defaultValue={task.projectVersionId} ref={register} name={'projectVersionId'}>
+                        {projectVersions}
                     </select>
                 </p>
                 <p>

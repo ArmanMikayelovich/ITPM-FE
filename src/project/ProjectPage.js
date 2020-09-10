@@ -12,6 +12,7 @@ import {
 } from "../constants/consts";
 import {TaskList} from "../task/Tasks";
 import {UpdateProjectForm} from "./Projects";
+import {ProjectVersionsTable} from "./ProjectVersionsTable";
 
 export function ProjectPage() {
 
@@ -54,13 +55,14 @@ export function ProjectPage() {
             <div style={{float: 'right'}}>
                 <h4>{"Owner"}<UserFullNameWithLinkToPage userId={project?.creatorId}/></h4>
                 <UsersInProjectList projectId={project.id}/>
+                <ProjectVersionsTable project={project} />
             </div>
 
             <br/>
 
             <Board projectId={project.id}/>
             <br/>
-            {project.publisherId === getUserId().toString(10) &&
+            {project.creatorId === getUserId().toString() &&
             <div style={{
                 float: "right",
                 margin: '10px',

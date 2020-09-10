@@ -161,7 +161,7 @@ function ProjectsByUserId(props) {
     );
 }
 
-function ProjectWithLinkToPage(props) {
+export function ProjectWithLinkToPage(props) {
     const projectId = props.projectId
     const [project, setProject] = useState(undefined);
 
