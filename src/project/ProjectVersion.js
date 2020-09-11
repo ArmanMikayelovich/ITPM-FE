@@ -36,3 +36,16 @@ export function ProjectVersion(props) {
         </div>
     )
 }
+
+export async function getProjectVersion(versionId) {
+    let response = await   fetch(HOST_ADDRESS + `/projects/versions/${versionId}`, {
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+        },
+    });
+    return await response.json();
+}

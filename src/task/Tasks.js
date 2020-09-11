@@ -130,11 +130,12 @@ function UpdateSprintForm() {
 }
 
 
-function TaskById() {
-    const [taskId, setProjectId] = useState("");
-    const [task, setTask] = useState("");
+export function TaskById(props) {
+   const taskId = props.taskId
 
-    const fetchProject = () => fetch(HOST_ADDRESS + '/tasks/' + taskId, {
+    const [task, setTask] = useState();
+    useEffect( () =>{
+        fetch(HOST_ADDRESS + '/tasks/' + taskId, {
         method: 'GET',
         mode: 'cors',
         headers: {
@@ -144,19 +145,16 @@ function TaskById() {
     }).then((response) => {
 
             let json = response.json();
-            json.then(data => setTask(JSON.stringify(data)));
+            json.then(data => setTask(data));
         }
-    ).catch(error => console.log(`an error occurred ${error}`));
-
+    ).catch(error => console.log(`an error occurred ${error}`)) }
+    ,[taskId]);
 
     return (
         <div>
-            Get Project By id <br/>
-            <input type={'text'} name={"projectId"} onChange={(e) => setProjectId(e.target.value)}/>
-            <button onClick={fetchProject}>Get</button>
-            <label>{task}</label>
+      {task?.name} . Type: {task?.taskType}
         </div>
-    );
+    )
 }
 
 
@@ -239,23 +237,6 @@ function AttachToUserForm() {
 
 }
 
-
-export function TasksPage() {
-    return (
-        <div>
-            <CreateSprintForm/>
-            <br/>
-            <UpdateSprintForm/>
-            <br/>
-            <TaskById/>
-            <br/>
-            <DeleteTask/>
-            <br/>
-            <AttachToUserForm/>
-            <br/>
-        </div>
-    );
-}
 
 export function TaskWithLinkToPage(props) {
     const task = props.task;

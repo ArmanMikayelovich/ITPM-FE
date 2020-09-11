@@ -2,18 +2,21 @@ import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {HOST_ADDRESS} from "../constants/consts";
 import MultiSelect from "react-multi-select-component";
+import {useHistory, useLocation} from "react-router";
+import {getProjectVersion} from "../project/ProjectVersion";
 
 export function UpdateTask(props) {
-    const task = props.task;
+    const location = useLocation();
+    const task = location.task;
     const [assigningUsers, setAssigningUsers] = useState();
     const [projectVersions, setProjectVersions] = useState();
     const [projectVersionOptions, setProjectVersionOptions] = useState([]);
     const [selectedProjectVersions, setSelectedProjectVersions] =
-        useState(task.affectedProjectVersions !== undefined ? task.affectedProjectVersions : []);
+        useState(task.affectedProjectVersions);
 
-    const updatePage = props.updatePage;
     const {register, handleSubmit} = useForm();
 
+    const history = useHistory();
     useEffect(() => {
         fetch(HOST_ADDRESS + `/users/by-project/${task.projectId}`, {
             method: 'GET',
@@ -63,8 +66,14 @@ export function UpdateTask(props) {
                     console.log("an error occurred on fetching project versions");
                 }
             })
-            .catch(error => console.log(JSON.stringify(error)))
+            .catch(error => console.log(JSON.stringify(error)));
 
+        const selectedVersionObjects = [];
+        selectedProjectVersions.forEach(versionId => {
+            getProjectVersion(versionId).then(data => selectedVersionObjects.push({label: data.version, value: data.id}))
+        })
+
+        setSelectedProjectVersions(selectedVersionObjects);
     }, [task])
 
     const onSubmit = (data) => {
@@ -80,7 +89,7 @@ export function UpdateTask(props) {
             .then((response) => {
                     if (response.status === 200) {
                         console.log(`Task updated ${JSON.stringify(data)}`);
-                        updatePage();
+                        history.push("/task",{task: task})
                     } else {
                         response.json().then(data => console.log(`Error in updating task state: code - ${data.status} message: ${data.message}`))
                     }

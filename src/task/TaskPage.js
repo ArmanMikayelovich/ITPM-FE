@@ -1,19 +1,57 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useLocation} from "react-router";
 import {getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
 import {HOST_ADDRESS} from "../constants/consts";
 import {CommentList, CreateCommentForm} from "../comment/Comments";
-import {DeleteTask} from "./Tasks";
-import {UpdateTask} from "./UpdateTask";
+import {DeleteTask, TaskById, TaskWithLinkToPage} from "./Tasks";
 import {ChangeTaskState} from "./ChangeTaskState";
 import {ChangeTaskPriority} from "./ChangePriority";
 import {ProjectWithLinkToPage} from "../project/Projects";
 import {ProjectVersion} from "../project/ProjectVersion";
+import {Link} from "react-router-dom";
 
 
 export function TaskPage() {
     let location = useLocation();
     const [task, setTask] = useState(location.task);
+    const [subTasks, setSubTasks] = useState(null);
+    useEffect(() => {
+        if (task === undefined || task === null) {
+            const taskId = location.state.task.id
+            fetch(HOST_ADDRESS + '/tasks/' + taskId, {
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+            }).then((response) => {
+
+                    let json = response.json();
+                    json.then(data => setTask(data));
+                }
+            ).catch(error => console.log(`an error occurred ${error}`));
+        }
+
+        fetch(HOST_ADDRESS + `/tasks/${task.id}/sub-tasks`, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+        })
+            .then((response) => {
+                    if (response.status === 200) {
+                        let json = response.json();
+                        json.then(data => setSubTasks(data));
+                    }
+                }
+            )
+
+            .catch(error => console.log(`Fail to save Task. An error occurred ${error}`));
+    }, [task]);
+
 
     const reRenderPage = () => {
         fetch(HOST_ADDRESS + '/tasks/' + task.id, {
@@ -36,7 +74,7 @@ export function TaskPage() {
 
     return (
         <div>
-            <h4 style={{float: 'left'}}>{task.name}</h4>
+            <h4 style={{float: 'left'}}>{task?.name}</h4>
 
             <div style={{float: 'right'}}>
                 <div style={{
@@ -49,7 +87,7 @@ export function TaskPage() {
                 }}>
                     <h4 style={{float: 'right', 'borderRight': '30px solid transparent'}}> Creator:<br/>
                         <UserFullNameWithLinkToPage
-                            userId={task.creatorId}/></h4>
+                            userId={task?.creatorId}/></h4>
                     <AssignedUserWithAssignToMeButton task={task}/>
                     <br/>
                     <br/>
@@ -63,18 +101,35 @@ export function TaskPage() {
                     width: ' 200px',
                     padding: '20px'
                 }}>
-                    <h5>Task Type: {task.taskType}</h5>
-                    <h5>Task State: {task.taskState}</h5>
-                    <h5>Task Priority: {task.priority}</h5>
-                    <h4>Project :<ProjectWithLinkToPage projectId={task.projectId}/></h4>
-                    <h5>Project version id : <ProjectVersion versionId={task.projectVersionId}/></h5>
+                    <h5>Task Type: {task?.taskType}</h5>
+                    <h5>Task State: {task?.taskState}</h5>
+                    <h5>Task Priority: {task?.priority}</h5>
+
+                    {task?.triggeredById !== undefined && task?.triggeredById !== null &&
+                    task?.triggeredById !== '' &&
+                    <h5>Trigger :  {task?.triggerType} <TaskById taskId={task?.triggeredById}/>
+
+                    </h5>}
+
+
+
+                    <h5>Parent: </h5> { task?.parentId && <TaskById taskId={task?.parentId}/>}
+                    {subTasks &&
+                    <div>
+                        <ul><b>Subtasks</b>
+                            {subTasks.map(task => <TaskWithLinkToPage task={task}/>)}
+                        </ul>
+                    </div>}
+                    <h4>Project :<ProjectWithLinkToPage projectId={task?.projectId}/></h4>
+                    <h5>Project version id : <ProjectVersion versionId={task?.projectVersionId}/></h5>
                     <ul>Affected Project versions
-                        {task.affectedProjectVersions.map(versionId => <ProjectVersion key={versionId} versionId={versionId} />)}
+                        {task?.affectedProjectVersions && task?.affectedProjectVersions.map(versionId => <ProjectVersion
+                            key={versionId} versionId={versionId}/>)}
                     </ul>
                 </div>
                 <div>
 
-                    {task.assignedUserId === getUserId().toString() && <div style={{
+                    {task?.assignedUserId === getUserId().toString() && <div style={{
 
                         margin: 'auto',
                         border: '3px solid green',
@@ -83,7 +138,7 @@ export function TaskPage() {
                         <ChangeTaskState updatePage={reRenderPage} task={task}/>
                     </div>}
 
-                    {(task.assignedUserId === getUserId().toString() || task.creatorId === getUserId().toString())
+                    {(task?.assignedUserId === getUserId().toString() || task?.creatorId === getUserId().toString())
                     && <div style={{
 
                         margin: 'auto',
@@ -93,15 +148,21 @@ export function TaskPage() {
                         <ChangeTaskPriority task={task} updatePage={reRenderPage}/>
                     </div>}
 
-                    {task.creatorId === getUserId().toString() && <div style={{
+                    {task?.creatorId === getUserId().toString() && <div style={{
                         margin: 'auto',
                         border: '3px solid green',
                         padding: '10px',
                     }}>
-                        <UpdateTask updatePage={reRenderPage} task={task}/></div>
+
+                        <Link to={{
+                            pathname: `/update-task`,
+                            task: task
+                        }}>Update Task</Link>
+
+                    </div>
                     }
 
-                    {task.creatorId === getUserId().toString() && <div style={{
+                    {task?.creatorId === getUserId().toString() && <div style={{
                         margin: 'auto',
                         border: '3px solid red',
                         padding: '5px',
@@ -116,13 +177,13 @@ export function TaskPage() {
                 width: '35%',
                 border: '3px solid green',
                 padding: '10px',
-            }}><h5>Description </h5> <p>{task.description}</p></div>
+            }}><h5>Description </h5> <p>{task?.description}</p></div>
             <br/>
 
-            <div style={{float: 'center'}}>
+            {task?.id && <div style={{float: 'center'}}>
                 <CommentList task={task} name={'All comments'}/>
-                <CreateCommentForm updatePage={reRenderPage} taskId={task.id}/>
-            </div>
+                <CreateCommentForm updatePage={reRenderPage} taskId={task?.id}/>
+            </div>}
 
         </div>
     );
@@ -131,7 +192,7 @@ export function TaskPage() {
 function AssignedUserWithAssignToMeButton(props) {
 
     const [task, setTask] = useState(props.task);
-    const taskId = task.id;
+    const taskId = task?.id;
     const userId = getUserId();
 
     const setUser = () => fetch(HOST_ADDRESS + '/tasks/attach', {
@@ -156,10 +217,10 @@ function AssignedUserWithAssignToMeButton(props) {
         }
     ).catch(error => console.log(`an error occurred ${error}`));
 
-    if (task.assignedUserId !== "") {
+    if (task?.assignedUserId !== "") {
         return (
             <div style={{float: 'right', 'borderRight': '30px solid transparent'}}><h4><br/> Assigned to: <br/>
-                <UserFullNameWithLinkToPage userId={task.assignedUserId}/></h4>
+                <UserFullNameWithLinkToPage userId={task?.assignedUserId}/></h4>
             </div>
         )
     } else {
