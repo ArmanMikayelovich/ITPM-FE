@@ -9,6 +9,7 @@ import {ChangeTaskPriority} from "./ChangePriority";
 import {ProjectWithLinkToPage} from "../project/Projects";
 import {ProjectVersion} from "../project/ProjectVersion";
 import {Link} from "react-router-dom";
+import {CloneTask} from "./CloneTask";
 
 
 export function TaskPage() {
@@ -146,6 +147,7 @@ export function TaskPage() {
                         padding: '10px',
                     }}>
                         <ChangeTaskPriority task={task} updatePage={reRenderPage}/>
+                       <CloneTask task={task}/>
                     </div>}
 
                     {task?.creatorId === getUserId().toString() && <div style={{

@@ -13,6 +13,8 @@ import {
 import {TaskList} from "../task/Tasks";
 import {UpdateProjectForm} from "./Projects";
 import {ProjectVersionsTable} from "./ProjectVersionsTable";
+import {CreateTask} from "../task/CreateTask";
+import {Link} from "react-router-dom";
 
 export function ProjectPage() {
 
@@ -41,6 +43,11 @@ export function ProjectPage() {
 
     return (
         <div>
+
+            <Link to={{
+                pathname: `/create-task`,
+                project: project
+            }}> Create New Task.</Link>
             <h3 style={{float: 'left'}}>{project?.name}</h3>
             <h3>Created at :{project.createdAt}</h3>
             <div style={{
@@ -75,9 +82,11 @@ export function ProjectPage() {
                 <br/>
                 <div style={{float: "right"}}>
                     <DeleteProject projectId={project.id}/>
-
                 </div>
             </div>}
+
+
+
         </div>
     );
 }

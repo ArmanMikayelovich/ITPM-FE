@@ -26,5 +26,39 @@ export function createProject(data) {
         .catch(error => console.log(`an error occurred ${error}`));
 }
 
+export async function getProjectVersions(projectId) {
+    let response = await fetch(HOST_ADDRESS + `/projects/${projectId}/versions`, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json'
+
+        },
+    });
+    return await response.json();
+}
 
 
+export async function getUsersOfProject(projectId) {
+    let response = await fetch(HOST_ADDRESS + `/users/by-project/${projectId}`, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json'
+
+        },
+    });
+    return await response.json();
+}
+
+export async  function getProjectsOfUser(userId) {
+    let response = await fetch(HOST_ADDRESS + `/projects/by-user/${userId}`, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+    });
+    return await response.json();
+}
