@@ -101,7 +101,7 @@ export function CreateTask(props) {
                 <p>
                     Fix version
                     <select ref={register} name={'projectVersionId'}>
-                        {projectVersions?.map(version => <option value={version.id}>{version.version}</option>)}
+                        {Array.isArray(projectVersions) && projectVersions?.map(version => <option value={version.id}>{version.version}</option>)}
                     </select>
                 </p>
                 ADDITIONAL
@@ -116,7 +116,7 @@ export function CreateTask(props) {
                 <br/>
                 Affected Project Versions: <br/>
                 <MultiSelect
-                    options={projectVersions?.map(data => {
+                    options={Array.isArray(projectVersions) && projectVersions?.map(data => {
                         return {label: data.version, value: data.id}
                     })}
                     value={selectedProjectVersions}
@@ -131,7 +131,7 @@ export function CreateTask(props) {
 
                         ref={register} name={"triggeredById"} defaultValue={null}>
                     <option value={null}>{''}</option>
-                    {tasksOfProject.map(task => <option value={task.id}>{task.name}</option>)}
+                    {Array.isArray(tasksOfProject) && tasksOfProject?.map(task => <option value={task.id}>{task.name}</option>)}
                 </select>
                 <p>
                     <select hidden={isTriggerInputHidden} ref={register} name={'triggerType'}
@@ -145,7 +145,7 @@ export function CreateTask(props) {
                     Parent
                     <select ref={register} defaultValue={null} name={'projectVersionId'}>
                         <option value={null}/>
-                        {tasksOfProject?.map(task => <option value={task.id}>{task.name}</option>)}
+                        {Array.isArray(tasksOfProject) && tasksOfProject?.map(task => <option value={task.id}>{task.name}</option>)}
                     </select>
                 </p>
                 <p>

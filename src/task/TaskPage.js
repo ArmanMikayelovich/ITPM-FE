@@ -10,6 +10,7 @@ import {ProjectWithLinkToPage} from "../project/Projects";
 import {ProjectVersion} from "../project/ProjectVersion";
 import {Link} from "react-router-dom";
 import {CloneTask} from "./CloneTask";
+import {MoveTask} from "./MoveTask";
 
 
 export function TaskPage() {
@@ -108,13 +109,12 @@ export function TaskPage() {
 
                     {task?.triggeredById !== undefined && task?.triggeredById !== null &&
                     task?.triggeredById !== '' &&
-                    <h5>Trigger :  {task?.triggerType} <TaskById taskId={task?.triggeredById}/>
+                    <h5>Trigger : {task?.triggerType} <TaskById taskId={task?.triggeredById}/>
 
                     </h5>}
 
 
-
-                    <h5>Parent: </h5> { task?.parentId && <TaskById taskId={task?.parentId}/>}
+                    <h5>Parent: </h5> {task?.parentId && <TaskById taskId={task?.parentId}/>}
                     {subTasks &&
                     <div>
                         <ul><b>Subtasks</b>
@@ -147,7 +147,7 @@ export function TaskPage() {
                         padding: '10px',
                     }}>
                         <ChangeTaskPriority task={task} updatePage={reRenderPage}/>
-                       <CloneTask task={task}/>
+                        <CloneTask task={task}/>
                     </div>}
 
                     {task?.creatorId === getUserId().toString() && <div style={{
@@ -155,7 +155,7 @@ export function TaskPage() {
                         border: '3px solid green',
                         padding: '10px',
                     }}>
-
+                        <MoveTask task={task}/>
                         <Link to={{
                             pathname: `/update-task`,
                             task: task

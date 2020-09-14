@@ -1,41 +1,34 @@
 import React, {useEffect, useState} from "react";
-import {getUserId} from "../user/UserInfo";
-import {getProjectsOfUser, getProjectVersions} from "../rest-service/ProjectService";
 import {useForm} from "react-hook-form";
+import {getProjectsOfUser, getProjectVersions} from "../rest-service/ProjectService";
+import {getUserId} from "../user/UserInfo";
 import {HOST_ADDRESS} from "../constants/consts";
 
-export function CloneTask(props) {
+export function MoveTask(props) {
     const task = props?.task;
 
-    /*  {
-          creatorId: "1",
-          id : 12,
-          projectId: "PR_1",
-          projectVersionId: 1
-      }*/
     const {register, handleSubmit} = useForm();
     const [projectsOfUser, setProjectsOfUser] = useState();
     const [projectVersions, setProjectVersions] = useState();
 
     useEffect( () => {
-      getProjectsOfUser(getUserId()).then(data => setProjectsOfUser(data.content));
+        getProjectsOfUser(getUserId()).then(data => setProjectsOfUser(data.content));
     }, [task])
 
 
     const fetchCloneTask = data => {
         data.creatorId = getUserId();
         data.id = task?.id;
-        console.clear();
         let isClear = true;
-     Object.keys(data).forEach((key) => {
-         if (data[key] === '') {
-             isClear = false;
-         }
-     })
-        !isClear && alert("You are not choose Project with its version");
+        Object.keys(data).forEach((key) => {
+            if (data[key] === '') {
+                isClear = false;
+            }
+        })
+        !isClear && alert("You are not choose Project with it's version");
         if (isClear) {
-            console.log("CLONING TASK " + JSON.stringify(task) + ' FOR PROJECT: ' + data.projectId + " VERSION: " + data.projectVersionId);
-            fetch(HOST_ADDRESS + '/tasks/clone', {
+            console.log("MOVING TASK " + JSON.stringify(task) + ' TO PROJECT: ' + data.projectId + " VERSION: " + data.projectVersionId);
+            fetch(HOST_ADDRESS + '/tasks/move', {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
@@ -59,7 +52,7 @@ export function CloneTask(props) {
 
     return (
         <div>
-            <h4>Clone Task for another project</h4>
+            <h4>Move Task to another project</h4>
             <form onSubmit={handleSubmit(fetchCloneTask)}>
 
 
