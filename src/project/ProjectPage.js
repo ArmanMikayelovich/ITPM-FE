@@ -15,6 +15,8 @@ import {UpdateProjectForm} from "./Projects";
 import {ProjectVersionsTable} from "./ProjectVersionsTable";
 import {CreateTask} from "../task/CreateTask";
 import {Link} from "react-router-dom";
+import {AddVersionToProject} from "./AddProjectVersion";
+import {UpdateProjectVersions} from "./UpdateProjectVersions";
 
 export function ProjectPage() {
 
@@ -62,7 +64,7 @@ export function ProjectPage() {
             <div style={{float: 'right'}}>
                 <h4>{"Owner"}<UserFullNameWithLinkToPage userId={project?.creatorId}/></h4>
                 <UsersInProjectList projectId={project.id}/>
-                <ProjectVersionsTable project={project} />
+                <ProjectVersionsTable project={project}/>
             </div>
 
             <br/>
@@ -80,11 +82,13 @@ export function ProjectPage() {
             }}>
                 <UpdateProjectForm updateProject={updatePage} project={project}/>
                 <br/>
+                <AddVersionToProject project={project} />
+                <br/>
+                <UpdateProjectVersions updateProject={updatePage} project={project} />
                 <div style={{float: "right"}}>
                     <DeleteProject projectId={project.id}/>
                 </div>
             </div>}
-
 
 
         </div>

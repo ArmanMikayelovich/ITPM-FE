@@ -1,16 +1,23 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {HOST_ADDRESS} from "../constants/consts";
 import {useForm} from "react-hook-form";
+import {getProjectVersions} from "../rest-service/ProjectService";
 
-export function UpdateProjectVersion(props) {
-    const projectVersion = props.version;
+export function UpdateProjectVersions(props) {
+    const project = props.project;
+    const [projectVersions, setProjectVersions] = useState();
+    const [selectedProjectVersion, setSelectedProjectVersion] = useState();
+    useEffect(() => {
+        getProjectVersions(project.id).then(data => setProjectVersions(data));
+    }, [project]);
+
     const {register, handleSubmit} = useForm();
     const onSubmit = (data) => updateProjectVersion(data)
 
-    const updatePage = props.updatePage()
+    const updatePage = props.updatePage;
 
     const updateProjectVersion = (data) => {
-        fetch(HOST_ADDRESS + `/projects/${projectVersion.projectId}/versions`, {
+       /* fetch(HOST_ADDRESS + `/projects/${projectVersion.projectId}/versions`, {
             method: 'PUT',
             mode: 'cors',
             headers: {
@@ -27,36 +34,44 @@ export function UpdateProjectVersion(props) {
                          code - ${data.status} message: ${data.message}`));
                     }
                 }
-            ).catch(error => console.log(`an error occurred ${error}`));
+            ).catch(error => console.log(`an error occurred ${error}`));*/
+        alert(JSON.stringify(data));
     }
+
 
     return (
         <div>
             <div>
                 <h3>Update Project version</h3>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <input hidden={true} type='text' name='id' ref={register} readOnly={true}
-                           value={projectVersion.id}/>
                     <input hidden={true} type='text' name='projectId' ref={register} readOnly={true}
-                           value={projectVersion.projectId}/>
-
-
+                           value={project.id}/>
                     <br/>
-                    <p> Version
-                        <input type='text' name='name' placeholder={"Version name"}
-                               defaultValue={projectVersion.version}
-                               ref={register}/>
-                        <br/>
+
+                    <p> Project Version: <br/>
+                        <select ref={register} name={'id'}>
+                            {projectVersions?.map(projectVersion => <option
+                                value={projectVersion.id}>{projectVersion.version} </option>)}
+                        </select>
                     </p>
-                        <p>
-                            Change Status to:
-                            <br/>
-                            <select defaultValue={'UNREALISED'} ref={register} name={'priority'}>
-                                <option value="REALISED">Realised</option>
-                                <option value="UNREALISED">Unrealised</option>
-                                <option value="ARCHIVED">Archived</option>
-                            </select>
-                        </p>
+
+                    <p>
+                        Change Version Name: <br/>
+                        <input ref={register} name={'name'} defaultValue={selectedProjectVersion?.version}/>
+                    </p>
+                    
+                    <p>
+                        Change Status to:
+                        <br/>
+                        <select defaultValue={selectedProjectVersion?.versionStatus} ref={register} name={'priority'}>
+                            <option value="REALISED">Realised</option>
+                            <option value="UNREALISED">Unrealised</option>
+                            <option value="ARCHIVED">Archived</option>
+                        </select>
+                    </p>
+                    <p>
+
+                    </p>
                     <br/>
                     <input type='submit' readOnly={true} value={"Update project"}/>
                 </form>

@@ -3,7 +3,7 @@ import {useForm} from "react-hook-form";
 import {createProject} from "../rest-service/ProjectService";
 import {HOST_ADDRESS} from '../constants/consts'
 import {Link} from "react-router-dom";
-import {getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
+import {getUserById, getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
 
 function CreateProjectForm() {
 
@@ -195,12 +195,28 @@ export function ProjectWithLinkToPage(props) {
 }
 
 export function BrowseProjects() {
+    const [user, setUser] = useState();
+    let [isUserFetched, setIsUserFetched] = useState(false);
+    useEffect(() => {
+        if (!isUserFetched) {
+            getUserById(getUserId()).then(data => setUser(data));
+            setIsUserFetched(true);
+        }
 
+    },[isUserFetched])
 
     return (
         <div>
-           User: <UserFullNameWithLinkToPage userId={getUserId()}/>
+            User: <UserFullNameWithLinkToPage userId={getUserId()}/>
             <ProjectsByUserId userId={getUserId()}/>
+            <p>
+                Create New Project:
+                <br/>
+                <Link to={{
+                    pathname: `/create-project`,
+                    user: user
+                }}> Create New Project.</Link>
+            </p>
         </div>
     );
 }

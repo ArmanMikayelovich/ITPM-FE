@@ -89,3 +89,17 @@ export function getUserId() {
     return 1;
     //TODO fix this with security
 }
+
+
+export async function getUserById(userId) {
+    let response = await fetch(HOST_ADDRESS + '/users/' + userId, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+    });
+
+    return await response.json();
+}
