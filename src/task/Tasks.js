@@ -2,6 +2,7 @@ import {useForm} from "react-hook-form";
 import React, {useEffect, useState} from "react";
 import {HOST_ADDRESS} from "../constants/consts";
 import {Link, useHistory} from "react-router-dom";
+import * as PropTypes from "prop-types";
 
 
 function CreateSprintForm() {
@@ -39,7 +40,7 @@ function CreateSprintForm() {
         <div>
             <h3>Create Task</h3>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <input type='text' placeholder={"Sprint id"} name='springId' ref={register}/>
+                <input type='text' placeholder={"Sprint id"} name='sprintId' ref={register}/>
                 <br/>
                 <input type='text' name='name' placeholder={"Task Name"} ref={register}/>
                 <br/>
@@ -103,7 +104,7 @@ function UpdateSprintForm() {
             <form onSubmit={handleSubmit(onSubmit)}>
                 <input type='text' name='creatorId' placeholder={"Creator UserId (Optional) "} ref={register}/>
                 <br/>
-                <input type='text' placeholder={"Sprint id"} name='springId' ref={register}/>
+                <input type='text' placeholder={"Sprint id"} name='sprintId' ref={register}/>
                 <br/>
                 <input type='text' placeholder={"Task id"} name='id' ref={register}/>
                 <br/>
@@ -130,7 +131,7 @@ function UpdateSprintForm() {
 }
 
 
-export function TaskById(props) {
+export function TaskByIdWithLinkToPage(props) {
    const taskId = props.taskId
 
     const [task, setTask] = useState();
@@ -152,9 +153,15 @@ export function TaskById(props) {
 
     return (
         <div>
-      {task?.name} . Type: {task?.taskType}
+            <Link to={{
+                pathname: `/task`,
+                task: task
+            }}> Task : {task?.name} . Type: {task?.taskType} </Link>
         </div>
     )
+}
+TaskByIdWithLinkToPage.propTypes = {
+    taskId: PropTypes.any.isRequired
 }
 
 
@@ -251,6 +258,10 @@ export function TaskWithLinkToPage(props) {
     )
 }
 
+TaskWithLinkToPage.propTypes={
+    task: PropTypes.element.isRequired
+}
+
 export function TaskList(props) {
     const sprintId = props.sprintId;
     const taskState = props.taskState;
@@ -301,3 +312,4 @@ export function TaskList(props) {
         </div>
     );
 }
+

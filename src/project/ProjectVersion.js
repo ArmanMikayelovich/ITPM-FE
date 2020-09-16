@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {HOST_ADDRESS} from "../constants/consts";
+import * as PropTypes from "prop-types";
 
 export function ProjectVersion(props) {
     const versionId = props.versionId;
@@ -35,6 +36,9 @@ export function ProjectVersion(props) {
                 {projectVersion?.version}
         </div>
     )
+}
+ProjectVersion.propTypes = {
+    versionId: PropTypes.any.isRequired
 }
 
 export async function getProjectVersion(versionId) {

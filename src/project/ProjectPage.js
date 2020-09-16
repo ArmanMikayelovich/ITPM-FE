@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useHistory, useLocation} from "react-router";
-import {getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
+import {getUserId, UserFullName, UserFullNameWithLinkToPage} from "../user/UserInfo";
 import {
     HOST_ADDRESS,
     LIST_DONE,
@@ -50,6 +50,12 @@ export function ProjectPage() {
                 pathname: `/create-task`,
                 project: project
             }}> Create New Task.</Link>
+            <br/>
+            <br/>
+            <Link to={{
+                pathname: `/backlog`,
+                project: project
+            }}> BackLog Page </Link>
             <h3 style={{float: 'left'}}>{project?.name}</h3>
             <h3>Created at :{project.createdAt}</h3>
             <div style={{

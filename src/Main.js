@@ -9,6 +9,7 @@ import {UserPage} from "./user/UserPage";
 import {UpdateTask} from "./task/UpdateTask";
 import {CreateTask} from "./task/CreateTask";
 import {CreateProject} from "./project/CreateProject";
+import {BackLogPage} from "./project/Backlog/BackLogPage";
 
 export function Main() {
     return (
@@ -23,6 +24,7 @@ export function Main() {
                 <Route path="/update-task" component={UpdateTask}/>
                 <Route path="/create-task" component={CreateTask}/>
                 <Route path="/create-project" component={CreateProject}/>
+                <Route path="/backlog" component={BackLogPage}/>
             </Switch>
         </div>
     )

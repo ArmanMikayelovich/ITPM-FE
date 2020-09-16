@@ -3,7 +3,7 @@ import {useLocation} from "react-router";
 import {getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
 import {HOST_ADDRESS} from "../constants/consts";
 import {CommentList, CreateCommentForm} from "../comment/Comments";
-import {DeleteTask, TaskById, TaskWithLinkToPage} from "./Tasks";
+import {DeleteTask, TaskByIdWithLinkToPage, TaskWithLinkToPage} from "./Tasks";
 import {ChangeTaskState} from "./ChangeTaskState";
 import {ChangeTaskPriority} from "./ChangePriority";
 import {ProjectWithLinkToPage} from "../project/Projects";
@@ -109,12 +109,12 @@ export function TaskPage() {
 
                     {task?.triggeredById !== undefined && task?.triggeredById !== null &&
                     task?.triggeredById !== '' &&
-                    <h5>Trigger : {task?.triggerType} <TaskById taskId={task?.triggeredById}/>
+                    <h5>Trigger : {task?.triggerType} <TaskByIdWithLinkToPage taskId={task?.triggeredById}/>
 
                     </h5>}
 
 
-                    <h5>Parent: </h5> {task?.parentId && <TaskById taskId={task?.parentId}/>}
+                    <h5>Parent: </h5> {task?.parentId && <TaskByIdWithLinkToPage taskId={task?.parentId}/>}
                     {subTasks &&
                     <div>
                         <ul><b>Subtasks</b>

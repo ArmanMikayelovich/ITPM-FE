@@ -106,7 +106,7 @@ export function UpdateTask(props) {
                 <input hidden={true} type='text' name='id' ref={register} readOnly={true} value={task.id}/>
                 <input hidden={true} type='text' name='creatorId' ref={register} readOnly={true}
                        value={task.creatorId}/>
-                <input hidden={true} type='text' name='springId' ref={register} readOnly={true} value={task.springId}/>
+                <input hidden={true} type='text' name='sprintId' ref={register} readOnly={true} value={task.sprintId}/>
                 <input hidden={true} type='text' name='taskState' ref={register} readOnly={true}
                        value={task.taskState}/>
                 <input hidden={true} type='text' name='projectId' ref={register} readOnly={true}
