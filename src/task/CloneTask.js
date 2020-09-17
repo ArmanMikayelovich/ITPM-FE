@@ -34,7 +34,6 @@ export function CloneTask(props) {
      })
         !isClear && alert("You are not choose Project with its version");
         if (isClear) {
-            console.log("CLONING TASK " + JSON.stringify(task) + ' FOR PROJECT: ' + data.projectId + " VERSION: " + data.projectVersionId);
             fetch(HOST_ADDRESS + '/tasks/clone', {
                 method: 'POST',
                 mode: 'cors',

@@ -37,13 +37,11 @@ export function CreateTask(props) {
         if (data.triggeredById === '') {
             data.triggerType = '';
         }
-        console.log(data);
-
         let formData = new FormData();
 
         console.clear();
         for (const [key, value] of Object.entries(data)) {
-            console.log(`${key}: ${value}`);
+
             formData.append(key,value);
 
         }
@@ -54,7 +52,7 @@ export function CreateTask(props) {
             body: formData
         }).then(response => {
             if (response.status === 200) {
-                console.log("all is ok task with files created");
+                console.log("all is ok task with files notcreated  ");
             } else {
                 console.error("Error on creating task with files: " + response);
             }

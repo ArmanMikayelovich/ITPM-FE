@@ -2,11 +2,23 @@ import {HOST_ADDRESS} from "../constants/consts";
 import {useForm} from "react-hook-form";
 import React, {useEffect, useState} from "react";
 import {getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
+import MultiSelect from "react-multi-select-component";
+import {getUsersOfProject} from "../rest-service/ProjectService";
+import {getTaskById} from "../rest-service/TaskService";
 
-// import {comment} from 'comments.css'
 export function CreateCommentForm(props) {
     const taskId = props.taskId;
     const updateTask = props.updatePage;
+    const [usersOfProject, setUserOfProject] = useState([]);
+
+    const [notifyingUsers, setNotifyingUsers] = useState([]);
+
+    useEffect(() => {
+        getTaskById(taskId).then(task => {
+            getUsersOfProject(task.projectId).then(data => setUserOfProject(data.content));
+        })
+    }, [taskId]);
+
     const sendComment = (data) => {
         fetch(HOST_ADDRESS + '/tasks/' + data.taskId + "/comments", {
             method: 'POST',
@@ -19,7 +31,6 @@ export function CreateCommentForm(props) {
         })
             .then((response) => {
                     if (response.status === 200) {
-                        console.log(`Comment successfully created ${JSON.stringify(data)}`);
                         updateTask();
                     } else {
                         response.json().then(data =>
@@ -33,7 +44,11 @@ export function CreateCommentForm(props) {
 
     const {register, handleSubmit} = useForm();
 
-    const onSubmit = (data) => sendComment(data)
+    const onSubmit = (data) => {
+        Object.assign(data, {notificationUsers: notifyingUsers.map(selected => selected.value)});
+        alert(JSON.stringify(data));
+        sendComment(data)
+    };
 
     return (
         <div style={{
@@ -52,8 +67,17 @@ export function CreateCommentForm(props) {
                     <input type='textarea' aria-multiline={true} name='text' placeholder={"Comment text"}
                            ref={register}/>
                 </p>
+
+                <MultiSelect
+                    options={usersOfProject?.map(user => {
+                        return {label: user.firstName + ' ' + user.lastName, value: user.userId}
+                    })}
+                    value={notifyingUsers}
+                    onChange={setNotifyingUsers}
+                    labelledBy={"Select Notifying users"}
+                />
                 <br/>
-                <input value={"Ddd comment"} type='submit'/>
+                <input value={"Add comment"} type='submit'/>
             </form>
         </div>
     );
@@ -75,7 +99,7 @@ function UpdateCommentForm() {
         })
             .then((response) => {
                     if (response.status === 200) {
-                        console.log(`Comment successfully updated ${JSON.stringify(data)}`);
+
 
                     } else {
                         response.json().then(data =>
@@ -124,7 +148,7 @@ function CommentsByTaskId() {
         },
     }).then((response) => response.json())
         .then(data => {
-            console.log(data);
+
             setComments(JSON.stringify(data.content));
         })
         .catch(error => console.log(`an error occurred ${error}`));

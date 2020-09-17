@@ -17,7 +17,6 @@ function CreateSprintForm() {
         })
             .then((response) => {
                     if (response.status === 200) {
-                        console.log(`Sprint successfully created ${JSON.stringify(data)}`);
 
                     } else {
                         response.json().then(data =>
@@ -109,7 +108,7 @@ function SprintsByProjectId() {
         },
     }).then((response) => response.json())
         .then(data => {
-            console.log(data);
+
             setSprints(JSON.stringify(data.content));
         })
         .catch(error => console.log(`an error occurred ${error}`));

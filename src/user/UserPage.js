@@ -1,24 +1,61 @@
 import React, {useEffect, useState} from "react";
-import {UserFullName} from "./UserInfo";
+import {getUserId, UserFullName} from "./UserInfo";
 import {useLocation} from "react-router";
 import {HOST_ADDRESS} from "../constants/consts";
 import {TaskList} from "../task/Tasks";
+import {useForm} from "react-hook-form";
+import {getProjectById} from "../rest-service/ProjectService";
 
 const CREATED = "created";
 const TODO = "TODO";
 const IN_PROGRESS = "IN_PROGRESS";
 const DONE = "DONE";
-
+const SHOW_ALL = 'all';
 export function UserPage() {
     const location = useLocation();
     const user = location.user;
 
+    const [filter, setFilter] = useState({projectId:'all', sort: false});
+
+    const [projects, setProjects] = useState();
+    useEffect(() => {
+        fetch(HOST_ADDRESS + `/projects/by-user/${user.userId}`, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+        }).then(response => {
+            const promise = response.json();
+            promise.then(data => setProjects(data.content));
+        })
+    }, [user,filter]);
+
+    const {register, handleSubmit} = useForm();
+
+    const handleFilterSubmit = data => {
+        setFilter(data);
+    }
+
     return (
         <div>
             <AboutUser user={user}/>
-            <ProjectsOfUser userId={user.userId}/>
+            <form onSubmit={handleSubmit(handleFilterSubmit)}>
+                <p>Filter By project</p>
+                <select ref={register} defaultValue={SHOW_ALL} name={'projectId'}>
+                    <option value={SHOW_ALL}>Show All</option>
+                    {projects?.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}
+                </select>
+                <input ref={register} type="checkbox" id="sort" name="sort"/>
+                <label htmlFor="sort"> Sort Tasks by priority</label>
+                <input type={'submit'} value={"Filter"}/>
+            </form>
+            {filter?.projectId === 'all' ? <ProjectsOfUser sort={filter?.sort} userId={user.userId}/> :
+                <TasksOfUserInProject sort={filter?.sort} key={filter?.projectId} userId={getUserId()} projectId={filter.projectId}/>}
+
         </div>
-    )
+    );
 }
 
 function AboutUser(props) {
@@ -49,6 +86,7 @@ function ProjectsOfUser(props) {
     const userId = props.userId;
     const [projects, setProjects] = useState([]);
     let [isFetched, setIsFetched] = useState(false);
+    const sort = props.sort;
     useEffect(() => {
         fetch(HOST_ADDRESS + `/projects/by-user/${userId}`, {
             method: 'GET',
@@ -76,20 +114,33 @@ function ProjectsOfUser(props) {
 
     return (
         <div style={{display: 'inline-block'}}>
-            {projects.map(item => <TasksOfUserInProject key={item.id} userId={userId} project={item}/>)}
+            {projects.map(item => <TasksOfUserInProject sort={sort} key={item.id} userId={userId} project={item}/>)}
         </div>
     );
 }
 
 function TasksOfUserInProject(props) {
     const userId = props.userId;
-    const projectId = props.project.id;
-    const projectName = props.project.name;
+    const projectId = props?.project?.id !== undefined ? props.project.id : props.projectId;
+    const [projectName, setProjectName] = useState();
+    const sort = props.sort;
     let keyCounter = 0;
+
+    useEffect(() => {
+        if (props?.project?.id !== undefined) {
+            getProjectById((projectId)).then(data => setProjectName(data.name));
+        }
+    }, [userId, projectId,sort]);
+
+
 
     const [lists, setLists] = useState([]);
     useEffect(() => {
-        fetch(HOST_ADDRESS + `/users/${userId}/projects/${projectId}/tasks`, {
+        let query = "";
+        if(sort) {
+            query = '?direction=DESC&sort=priority'
+        }
+        fetch(HOST_ADDRESS + `/users/${userId}/projects/${projectId}/tasks${query}`, {
             method: 'GET',
             mode: 'cors',
             headers: {
@@ -116,7 +167,7 @@ function TasksOfUserInProject(props) {
                 });
             }
         ).catch(error => console.log(`an error occurred ${error}`));
-    }, [userId, projectId, lists]);
+    }, [userId, projectId, lists,sort]);
 
 
     return (

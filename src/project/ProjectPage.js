@@ -17,6 +17,7 @@ import {CreateTask} from "../task/CreateTask";
 import {Link} from "react-router-dom";
 import {AddVersionToProject} from "./AddProjectVersion";
 import {UpdateProjectVersions} from "./UpdateProjectVersions";
+import {AttachUserToProject} from "./AttachUserToProject";
 
 export function ProjectPage() {
 
@@ -85,12 +86,12 @@ export function ProjectPage() {
                 'boxShadow': '0 2px 2px #B22222',
                 width: ' 200px',
                 padding: '20px'
-            }}>
+            }}><AttachUserToProject projectId={project?.id}/>
                 <UpdateProjectForm updateProject={updatePage} project={project}/>
                 <br/>
-                <AddVersionToProject project={project} />
+                <AddVersionToProject project={project}/>
                 <br/>
-                <UpdateProjectVersions updateProject={updatePage} project={project} />
+                <UpdateProjectVersions updateProject={updatePage} project={project}/>
                 <div style={{float: "right"}}>
                     <DeleteProject projectId={project.id}/>
                 </div>

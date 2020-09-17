@@ -24,7 +24,7 @@ export function DeleteProjectVersion(props) {
             })
                 .then((response) => {
                         if (response.status === 200) {
-                            console.log(`Comment successfully updated ${JSON.stringify(data)}`);
+
 
                         } else {
                             response.json().then(data =>

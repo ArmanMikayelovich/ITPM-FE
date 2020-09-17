@@ -40,3 +40,15 @@ export async function getAllTasksBySprintId(sprintId) {
     });
     return await response.json();
 }
+export async function getTaskById(taskId) {
+
+    const response = await fetch(HOST_ADDRESS + `/tasks/${taskId}`, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json'
+
+        },
+    });
+    return await response.json();
+}

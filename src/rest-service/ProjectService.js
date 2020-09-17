@@ -14,10 +14,9 @@ export function createProject(data) {
     })
         .then((response) => {
                 if (response.status === 200) {
-                    console.log(`Project successfully created ${JSON.stringify(data)}`);
+
 
                 } else {
-                    console.log(`Data Sent. ${JSON.stringify(data)}`);
                     response.json().then(data => alert(`Error: code - ${data.status} message: ${data.message}`))
                 }
             }
@@ -53,6 +52,18 @@ export async function getUsersOfProject(projectId) {
 
 export async  function getProjectsOfUser(userId) {
     let response = await fetch(HOST_ADDRESS + `/projects/by-user/${userId}`, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+    });
+    return await response.json();
+}
+
+export async  function getProjectById(projectId) {
+    let response = await fetch(HOST_ADDRESS + `/projects/by-id/${projectId}`, {
         method: 'GET',
         mode: 'cors',
         headers: {

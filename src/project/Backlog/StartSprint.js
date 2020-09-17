@@ -16,7 +16,6 @@ export function StartSprint(props) {
         } else {
             data.id = sprint.id;
 
-            console.log(data);
             fetch(HOST_ADDRESS + "/sprints/start", {
                 method: 'PUT',
                 mode: 'cors',

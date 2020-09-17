@@ -48,7 +48,6 @@ export function UpdateProjectForm(props) {
         })
             .then((response) => {
                     if (response.status === 200) {
-                        console.log(`Project successfully updated ${JSON.stringify(data)}`);
                         updatePage(data.id);
                     } else {
                         response.json().then(data => console.log(`Error in updating project: code - ${data.status} message: ${data.message}`))
@@ -121,7 +120,7 @@ function ProjectById() {
 
 function ProjectsByUserId(props) {
     const userId = props.userId;
-    const [projects, setProjects] = useState("");
+    const [projects, setProjects] = useState([]);
     useEffect(() => {
         fetch(HOST_ADDRESS + '/projects/by-user/' + userId, {
             method: 'GET',
@@ -154,7 +153,6 @@ function ProjectsByUserId(props) {
         <div>
             <h5>Projects by User: {userId}</h5>
 
-            {console.log(projectList)}
             {projects ? projectList : ""}
 
         </div>

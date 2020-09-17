@@ -19,7 +19,7 @@ function CreateSprintForm() {
         })
             .then((response) => {
                     if (response.status === 200) {
-                        console.log(`Task successfully created ${JSON.stringify(data)}`);
+
 
                     } else {
                         response.json().then(data =>
@@ -81,7 +81,7 @@ function UpdateSprintForm() {
         })
             .then((response) => {
                     if (response.status === 200) {
-                        console.log(`Task successfully updated ${JSON.stringify(data)}`);
+
 
                     } else {
                         response.json().then(data =>
@@ -249,7 +249,7 @@ export function TaskWithLinkToPage(props) {
     const task = props.task;
 
     return (
-        <div>
+        <div style={{color: task.priority==='HIGH' ? 'red' : ""}}>
             <li key={task.id}><Link to={{
                 pathname: `/task`,
                 task: task
@@ -271,7 +271,6 @@ export function TaskList(props) {
 
     useEffect(() => {
         if (props.taskArray !== null && props.taskArray !== undefined && props.taskArray.length !== 0) {
-            console.log(`TASKS ARE ${JSON.stringify(props.taskArray)}`);
             let arrayOfElements = props.taskArray.map(task => <TaskWithLinkToPage key={task.id} task={task}/>);
 
             setTasks(arrayOfElements);

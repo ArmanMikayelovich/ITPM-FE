@@ -35,7 +35,7 @@ export function MoveTask(props) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
-            }).then(() => console.log(`Data Sent. ${JSON.stringify(data)}`))
+            }).then(() => {})
                 .catch(error => console.log(`an error occurred ${error}`));
         }
     };

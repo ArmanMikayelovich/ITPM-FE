@@ -88,7 +88,7 @@ export function UpdateTask(props) {
         })
             .then((response) => {
                     if (response.status === 200) {
-                        console.log(`Task updated ${JSON.stringify(data)}`);
+
                         history.push("/task",{task: task})
                     } else {
                         response.json().then(data => console.log(`Error in updating task state: code - ${data.status} message: ${data.message}`))
@@ -152,6 +152,7 @@ export function UpdateTask(props) {
                 </p>
                 <br/>
                 <br/>
+                Select affected project version.
                     <MultiSelect
                         options={projectVersionOptions}
                         value={selectedProjectVersions}
