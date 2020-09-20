@@ -6,6 +6,7 @@ import {getProjectVersions, getUsersOfProject} from "../rest-service/ProjectServ
 import MultiSelect from "react-multi-select-component";
 import {getTasksOfProject} from "../rest-service/TaskService";
 import {HOST_ADDRESS} from "../constants/consts";
+import {attachFileToTask} from "../rest-service/FileService";
 
 export function CreateTask(props) {
     const location = useLocation();
@@ -18,6 +19,7 @@ export function CreateTask(props) {
     const [selectedProjectVersions, setSelectedProjectVersions] = useState([]);
     const [tasksOfProject, setTasksOfProject] = useState([]);
     const [isTriggerInputHidden, setIsTriggerInputHidden] = useState(true)
+    const [uploadingFiles, setUploadingFiles] = useState([]);
     useEffect(() => {
         getProjectVersions(project?.id).then(data => setProjectVersions(data));
         getTasksOfProject(project?.id).then(data => setTasksOfProject(data));
@@ -32,34 +34,47 @@ export function CreateTask(props) {
 
         }
     }
-    const onSubmit = data => {
+    const FetchTask = data => {
         Object.assign(data, {affectedProjectVersions: selectedProjectVersions.map(data => data.value)})
         if (data.triggeredById === '') {
-            data.triggerType = '';
+            data.triggerType = null;
         }
-        let formData = new FormData();
-
         console.clear();
-        for (const [key, value] of Object.entries(data)) {
-
-            formData.append(key,value);
-
-        }
-
+        console.log(data);
         fetch(`${HOST_ADDRESS}/tasks`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
             method: 'POST',
             mode: 'cors',
-            body: formData
+            body: JSON.stringify(data)
         }).then(response => {
             if (response.status === 200) {
-                console.log("all is ok task with files notcreated  ");
+                response.json().then(task => {
+                    uploadingFiles.forEach(file => {
+                        attachFileToTask(file, task.id)
+                    })
+                    alert(`Task created,${uploadingFiles.length} files uploaded`);
+                })
+
             } else {
-                console.error("Error on creating task with files: " + response);
+                console.error("Error on creating task : " + response);
             }
         })
+
+
     }
 
 
+    const onFileChangeHandler = (e) => {
+        let files = [];
+        for (let i = 0; i < e.target.files.length; i++) {
+            files.push(e.target.files[i]);
+        }
+        console.clear();
+        console.log("UPLOAD FILES" + files);
+        setUploadingFiles(files);
+    };
 
 
     return (
@@ -69,7 +84,7 @@ export function CreateTask(props) {
             <input hidden={true} type='text' name={'creatorId'} defaultValue={getUserId()} ref={register}/>
 
 
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(FetchTask)}>
                 Important
                 <p>
                     Task name:<br/>
@@ -99,10 +114,14 @@ export function CreateTask(props) {
                 <p>
                     Fix version
                     <select ref={register} name={'projectVersionId'}>
-                        {Array.isArray(projectVersions) && projectVersions?.map(version => <option value={version.id}>{version.version}</option>)}
+                        {Array.isArray(projectVersions) && projectVersions?.map(version => <option
+                            value={version.id}>{version.version}</option>)}
                     </select>
                 </p>
                 ADDITIONAL
+                <p>Description<br/>
+                    <textarea ref={register} name={'description'} placeholder={"Description"}/>
+                </p>
                 <p>
                     Assigned user
                     <select ref={register} name={'assignedUserId'}>
@@ -129,7 +148,8 @@ export function CreateTask(props) {
 
                         ref={register} name={"triggeredById"} defaultValue={null}>
                     <option value={null}>{''}</option>
-                    {Array.isArray(tasksOfProject) && tasksOfProject?.map(task => <option value={task.id}>{task.name}</option>)}
+                    {Array.isArray(tasksOfProject) && tasksOfProject?.map(task => <option
+                        value={task.id}>{task.name}</option>)}
                 </select>
                 <p>
                     <select hidden={isTriggerInputHidden} ref={register} name={'triggerType'}
@@ -141,15 +161,17 @@ export function CreateTask(props) {
                 <br/>
                 <p>
                     Parent
-                    <select ref={register} defaultValue={null} name={'projectVersionId'}>
+                    <select ref={register} defaultValue={null} name={'parentId'}>
                         <option value={null}/>
-                        {Array.isArray(tasksOfProject) && tasksOfProject?.map(task => <option value={task.id}>{task.name}</option>)}
+                        {Array.isArray(tasksOfProject) && tasksOfProject?.map(task => <option
+                            value={task.id}>{task.name}</option>)}
                     </select>
                 </p>
                 <p>
                     Attach files:
                     <br/>
-                    <input type={'file'} multiple={true} name={'uploadedFiles'} ref={register}/>
+                    <input type={'file'} multiple={true} onChange={onFileChangeHandler} name={'uploadedFiles'}
+                           ref={register}/>
                 </p>
                 <input type="submit"/>
             </form>

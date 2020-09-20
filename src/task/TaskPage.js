@@ -11,12 +11,15 @@ import {ProjectVersion} from "../project/ProjectVersion";
 import {Link} from "react-router-dom";
 import {CloneTask} from "./CloneTask";
 import {MoveTask} from "./MoveTask";
+import {getFileInfosOfTask} from "../rest-service/FileService";
+import {FileNameWithHref} from "./FileNameWithHref";
 
 
 export function TaskPage() {
     let location = useLocation();
     const [task, setTask] = useState(location.task);
     const [subTasks, setSubTasks] = useState(null);
+    const [files, setFiles] = useState([]);
     useEffect(() => {
         if (task === undefined || task === null) {
             const taskId = location.state.task.id
@@ -52,6 +55,8 @@ export function TaskPage() {
             )
 
             .catch(error => console.log(`Fail to save Task. An error occurred ${error}`));
+        getFileInfosOfTask(task.id).then(data => setFiles(data));
+
     }, [task]);
 
 
@@ -180,6 +185,7 @@ export function TaskPage() {
                 border: '3px solid green',
                 padding: '10px',
             }}><h5>Description </h5> <p>{task?.description}</p></div>
+            {files.map(file => <FileNameWithHref key={file.id} fileInfo={file}/>)}
             <br/>
 
             {task?.id && <div style={{float: 'center'}}>
