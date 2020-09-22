@@ -258,9 +258,6 @@ export function TaskWithLinkToPage(props) {
     )
 }
 
-TaskWithLinkToPage.propTypes={
-    task: PropTypes.element.isRequired
-}
 
 export function TaskList(props) {
     const sprintId = props.sprintId;

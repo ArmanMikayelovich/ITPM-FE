@@ -43,12 +43,14 @@ export function ProjectPage() {
         ).catch(error => console.log(`an error occurred ${error}`));
     }
 
+    let flag = true;
+
 
     return (
         <div>
 
-            <Link to={{
-                pathname: `/create-task`,
+            <Link onClick={() => flag ? alert("asd") : 'jb'} to={{
+                pathname:`/create-task`,
                 project: project
             }}> Create New Task.</Link>
             <br/>
@@ -58,16 +60,12 @@ export function ProjectPage() {
                 project: project
             }}> BackLog Page </Link>
             <h3 style={{float: 'left'}}>{project?.name}</h3>
+
             <h3>Created at :{project.createdAt}</h3>
-            <div style={{
-                margin: '10px',
-                border: '1px solid #eee',
-                'boxShadow': '0 2px 2px #B22222',
-                width: ' 200px',
-                height: "300",
-                padding: '20px'
-            }}><h4>Description</h4>
-                <p>{project.description}</p></div>
+<div>
+    <b>Description:</b>  {project.description}
+</div>
+
             <div style={{float: 'right'}}>
                 <h4>{"Owner"}<UserFullNameWithLinkToPage userId={project?.creatorId}/></h4>
                 <UsersInProjectList projectId={project.id}/>
@@ -84,7 +82,7 @@ export function ProjectPage() {
                 margin: '10px',
                 border: '1px solid #eee',
                 'boxShadow': '0 2px 2px #B22222',
-                width: ' 200px',
+                width: ' 500px',
                 padding: '20px'
             }}><AttachUserToProject projectId={project?.id}/>
                 <UpdateProjectForm updateProject={updatePage} project={project}/>

@@ -17,7 +17,7 @@ export function UpdateProjectVersions(props) {
     const updatePage = props.updatePage;
 
     const updateProjectVersion = (data) => {
-       /* fetch(HOST_ADDRESS + `/projects/${projectVersion.projectId}/versions`, {
+      /*fetch(HOST_ADDRESS + `/projects/${projectVersion.projectId}/versions`, {
             method: 'PUT',
             mode: 'cors',
             headers: {
@@ -48,27 +48,23 @@ export function UpdateProjectVersions(props) {
                            value={project.id}/>
                     <br/>
 
-                    <p> Project Version: <br/>
+                     Choose Version:&nbsp;&nbsp;
                         <select ref={register} name={'id'}>
                             {projectVersions?.map(projectVersion => <option
                                 value={projectVersion.id}>{projectVersion.version} </option>)}
                         </select>
-                    </p>
-
-                    <p>
-                        Change Version Name: <br/>
+                    <br/>
+                        Change Version Name:&nbsp;&nbsp;
                         <input ref={register} name={'name'} defaultValue={selectedProjectVersion?.version}/>
-                    </p>
-                    
-                    <p>
-                        Change Status to:
-                        <br/>
-                        <select defaultValue={selectedProjectVersion?.versionStatus} ref={register} name={'priority'}>
+
+
+                    <br/>
+                         Status:  <select defaultValue={selectedProjectVersion?.versionStatus} ref={register} name={'priority'}>
                             <option value="REALISED">Realised</option>
                             <option value="UNREALISED">Unrealised</option>
                             <option value="ARCHIVED">Archived</option>
                         </select>
-                    </p>
+
                     <p>
 
                     </p>

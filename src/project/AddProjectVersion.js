@@ -31,23 +31,18 @@ export function AddVersionToProject(props) {
         <div>
 
 
-            <form onSubmit={handleSubmit(onSubmit)}>Create Project version.
+            <form onSubmit={handleSubmit(onSubmit)}>Create Project version.<br/>
                 <input type={'text'} ref={register} name={'projectId'} defaultValue={project.id} hidden={true}/>
 
-                <p>
-                    Version name: <br/>
-                    <input type={'text'} required={true} ref={register} name={'version'}/>
-                </p>
-                <p>
-                    Status: <br/>
-                    <select ref={register} name={'versionStatus'} defaultValue={"UNREALISED"}>
+                    Version name:&nbsp;&nbsp; <input type={'text'} required={true} ref={register} name={'version'}/>
+
+                    <br/>
+                    Status:&nbsp;&nbsp; <select ref={register} name={'versionStatus'} defaultValue={"UNREALISED"}>
                         <option value={"UNREALISED"}>Unrealised</option>
                         <option value={"REALISED"}>Realised</option>
                         <option value={"ARCHIVED"}>Archived</option>
-                    </select>
-                </p>
-
-                <input type={'submit'} value={"Create Version"}/>
+                    </select>&nbsp;&nbsp;
+                <input type={'submit'} value={"Create."}/>
             </form>
         </div>
     );

@@ -70,14 +70,11 @@ export function UpdateProjectForm(props) {
                        value={project.publisherId}/>
 
                 <br/>
-                <p> Name
-                    <input type='text' name='name' placeholder={"Project name"} defaultValue={project.name}
+        Name: <input type='text' name='name' placeholder={"Project name"} defaultValue={project.name}
                            ref={register}/>
-                    <br/>
-                </p>
+
                 <p>
-                    Description
-                    <input type='text' name="description" placeholder={"Description"}
+                    Description:  <input type='text' name="description" placeholder={"Description"}
                            defaultValue={project.description} ref={register}/>
                 </p>
                 <br/>
@@ -186,7 +183,7 @@ export function ProjectWithLinkToPage(props) {
             <li><Link to={{
                 pathname: `/project`,
                 project: project
-            }}> Project name : {project?.name} </Link></li>
+            }}> {project?.name} </Link></li>
         </div>
     )
 
@@ -201,14 +198,13 @@ export function BrowseProjects() {
             setIsUserFetched(true);
         }
 
-    },[isUserFetched])
+    }, [isUserFetched])
 
     return (
         <div>
             User: <UserFullNameWithLinkToPage userId={getUserId()}/>
             <ProjectsByUserId userId={getUserId()}/>
             <p>
-                Create New Project:
                 <br/>
                 <Link to={{
                     pathname: `/create-project`,

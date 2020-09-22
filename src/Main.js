@@ -12,6 +12,8 @@ import {CreateProject} from "./project/CreateProject";
 import {BackLogPage} from "./project/Backlog/BackLogPage";
 
 export function Main() {
+    let flag = false;
+
     return (
         <div>
             <Switch>

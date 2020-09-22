@@ -28,11 +28,11 @@ export function AttachUserToProject(props) {
         <div style={{padding: '1px'}}>Attach user to project.
             <form onSubmit={handleSubmit(onSubmit)}>
                 <input type={'text'} name={'projectId'} ref={register} defaultValue={projectId} hidden={true}/>
-                <p>Input user's e-mail.
+                <p>Input user's e-mail.&nbsp;&nbsp;
                     <input type={'email'} name={'email'} ref={register}/>
                 </p>
                 <p>
-                    Choose role in project.
+                    Choose role in project.&nbsp;&nbsp;
                     <select ref={register}  name={'role'}>
                         <option value={'ADMINISTRATORS'}>Administrators</option>
                         <option value={'DEVELOPERS'}>Developers</option>
