@@ -1,6 +1,7 @@
 import {useForm} from "react-hook-form";
 import {HOST_ADDRESS} from "../constants/consts";
 import React from "react";
+import {changePromptContext} from "../App";
 
 export function ChangeTaskState(props) {
     const task = props.task;
@@ -10,6 +11,7 @@ export function ChangeTaskState(props) {
 
 
     const onSubmit = (data) => {
+        changePromptContext(false, '')
         fetch(HOST_ADDRESS + '/tasks/change-state', {
             method: 'PUT',
             mode: 'cors',
@@ -41,7 +43,8 @@ export function ChangeTaskState(props) {
                 <p>
                     Change state to
                     <br/>
-                    <select defaultValue={'DONE'} ref={register} name={'taskState'}>
+                    <select onChange={() => changePromptContext(true, "Change project version not finished")}
+                            defaultValue={'DONE'} ref={register} name={'taskState'}>
                         <option value="TODO">To do</option>
                         <option value="IN_PROGRESS">In progress</option>
                         <option value="DONE">Done</option>

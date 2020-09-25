@@ -3,35 +3,31 @@ import {getUserId} from "../user/UserInfo";
 import {getProjectsOfUser, getProjectVersions} from "../rest-service/ProjectService";
 import {useForm} from "react-hook-form";
 import {HOST_ADDRESS} from "../constants/consts";
+import {changePromptContext} from "../App";
 
 export function CloneTask(props) {
     const task = props?.task;
 
-    /*  {
-          creatorId: "1",
-          id : 12,
-          projectId: "PR_1",
-          projectVersionId: 1
-      }*/
     const {register, handleSubmit} = useForm();
     const [projectsOfUser, setProjectsOfUser] = useState();
     const [projectVersions, setProjectVersions] = useState();
 
-    useEffect( () => {
-      getProjectsOfUser(getUserId()).then(data => setProjectsOfUser(data.content));
+    useEffect(() => {
+        getProjectsOfUser(getUserId()).then(data => setProjectsOfUser(data.content));
     }, [task])
 
 
     const fetchCloneTask = data => {
+        changePromptContext(false, '');
         data.creatorId = getUserId();
         data.id = task?.id;
         console.clear();
         let isClear = true;
-     Object.keys(data).forEach((key) => {
-         if (data[key] === '') {
-             isClear = false;
-         }
-     })
+        Object.keys(data).forEach((key) => {
+            if (data[key] === '') {
+                isClear = false;
+            }
+        })
         !isClear && alert("You are not choose Project with its version");
         if (isClear) {
             fetch(HOST_ADDRESS + '/tasks/clone', {
@@ -62,16 +58,20 @@ export function CloneTask(props) {
             <form onSubmit={handleSubmit(fetchCloneTask)}>
 
 
-                <select ref={register}  onChange={handleProjectChange} name={'projectId'}>
+                <select ref={register} onChange={e => {
+                    handleProjectChange(e);
+                    changePromptContext(true, "Clone task not finished");
+                }}
+                        name={'projectId'}>
                     <option value={''}>Choose Project</option>
                     {projectsOfUser?.map(project => <option value={project.id}>{project.name}</option>)}
                 </select>
-                <select ref={register} name={'projectVersionId'}>
-                    <option value={''}>Choose Project Id </option>
+                <select onChange={() => changePromptContext(true, "Clone Task for another project not finished")} ref={register} name={'projectVersionId'}>
+                    <option value={''}>Choose Project Id</option>
 
                     {projectVersions?.map(version => <option value={version.id}>{version.version}</option>)}
                 </select>
-                <input type={'submit'} value={"Clone"} />
+                <input type={'submit'} value={"Clone"}/>
             </form>
 
         </div>

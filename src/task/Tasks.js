@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import {HOST_ADDRESS} from "../constants/consts";
 import {Link, useHistory} from "react-router-dom";
 import * as PropTypes from "prop-types";
+import {onLinkClickAction} from "../project/confirm/onClickAction";
 
 
 function CreateSprintForm() {
@@ -132,62 +133,70 @@ function UpdateSprintForm() {
 
 
 export function TaskByIdWithLinkToPage(props) {
-   const taskId = props.taskId
+    const taskId = props.taskId
 
     const [task, setTask] = useState();
-    useEffect( () =>{
-        fetch(HOST_ADDRESS + '/tasks/' + taskId, {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-    }).then((response) => {
+    useEffect(() => {
+            fetch(HOST_ADDRESS + '/tasks/' + taskId, {
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+            }).then((response) => {
 
-            let json = response.json();
-            json.then(data => setTask(data));
+                    let json = response.json();
+                    json.then(data => setTask(data));
+                }
+            ).catch(error => console.log(`an error occurred ${error}`))
         }
-    ).catch(error => console.log(`an error occurred ${error}`)) }
-    ,[taskId]);
+        , [taskId]);
 
     return (
         <div>
-            <Link to={{
+            <Link onClick={e => onLinkClickAction(e)} to={{
                 pathname: `/task`,
                 task: task
             }}> Task : {task?.name} . Type: {task?.taskType} </Link>
         </div>
     )
 }
+
 TaskByIdWithLinkToPage.propTypes = {
     taskId: PropTypes.any.isRequired
 }
 
 
 export function DeleteTask(props) {
-    const taskId = props.taskId
-    const history = useHistory();
-    const deleteTask = (taskId) => {
-        fetch(HOST_ADDRESS + '/tasks/' + taskId, {
-            method: 'DELETE',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json'
 
-            },
-        })
-            .then((response) => {
-                    if (response.status === 200) {
-                        console.log(`Task ${taskId} deleting: status - ${response.status}`);
-                        history.push("/browse");
-                    } else {
-                        console.log(`An error occurred. Task ${taskId} deleting: status - ${response.status}`);
+
+
+        const taskId = props.taskId;
+        const history = useHistory();
+        const deleteTask = (taskId) => {
+            const isDeleting = window.confirm("Are you sure to delete task?");
+            if (isDeleting) {
+            fetch(HOST_ADDRESS + '/tasks/' + taskId, {
+                method: 'DELETE',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json'
+
+                },
+            })
+                .then((response) => {
+                        if (response.status === 200) {
+                            console.log(`Task ${taskId} deleting: status - ${response.status}`);
+                            history.push("/browse");
+                        } else {
+                            console.log(`An error occurred. Task ${taskId} deleting: status - ${response.status}`);
+                        }
                     }
-                }
-            )
+                )
 
-            .catch(error => console.log(`an error occurred ${error}`));
+                .catch(error => console.log(`an error occurred ${error}`));
+        }
     }
     return (
         <div>
@@ -249,8 +258,8 @@ export function TaskWithLinkToPage(props) {
     const task = props.task;
 
     return (
-        <div style={{color: task.priority==='HIGH' ? 'red' : ""}}>
-            <li key={task.id}><Link to={{
+        <div style={{color: task.priority === 'HIGH' ? 'red' : ""}}>
+            <li key={task.id}><Link onClick={e => onLinkClickAction(e)} to={{
                 pathname: `/task`,
                 task: task
             }}> Task : {task.name} . Type: {task.taskType} </Link></li>

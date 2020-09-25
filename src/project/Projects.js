@@ -4,6 +4,8 @@ import {createProject} from "../rest-service/ProjectService";
 import {HOST_ADDRESS} from '../constants/consts'
 import {Link} from "react-router-dom";
 import {getUserById, getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
+import {onLinkClickAction} from "./confirm/onClickAction";
+import {changePromptContext} from "../App";
 
 function CreateProjectForm() {
 
@@ -37,6 +39,7 @@ export function UpdateProjectForm(props) {
     const updatePage = props.updateProject;
 
     const updateProject = (data) => {
+        changePromptContext(false, '');
         fetch(HOST_ADDRESS + '/projects', {
             method: 'PUT',
             mode: 'cors',
@@ -70,11 +73,12 @@ export function UpdateProjectForm(props) {
                        value={project.publisherId}/>
 
                 <br/>
-        Name: <input type='text' name='name' placeholder={"Project name"} defaultValue={project.name}
+        Name: <input onChange={() => changePromptContext(true, "update project not finished")} type='text' name='name' placeholder={"Project name"} defaultValue={project.name}
                            ref={register}/>
 
                 <p>
-                    Description:  <input type='text' name="description" placeholder={"Description"}
+                    Description:  <input onChange={() => changePromptContext(true, "update project not finished")}
+                                         type='textarea' name="description" placeholder={"Description"}
                            defaultValue={project.description} ref={register}/>
                 </p>
                 <br/>
@@ -180,7 +184,7 @@ export function ProjectWithLinkToPage(props) {
 
     return (
         <div>
-            <li><Link to={{
+            <li><Link onClick={e => onLinkClickAction(e) } to={{
                 pathname: `/project`,
                 project: project
             }}> {project?.name} </Link></li>
@@ -206,7 +210,7 @@ export function BrowseProjects() {
             <ProjectsByUserId userId={getUserId()}/>
             <p>
                 <br/>
-                <Link to={{
+                <Link onClick={e => onLinkClickAction(e) } to={{
                     pathname: `/create-project`,
                     user: user
                 }}> Create New Project.</Link>

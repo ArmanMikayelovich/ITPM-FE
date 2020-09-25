@@ -1,6 +1,7 @@
 import React from "react";
 import {useForm} from "react-hook-form";
 import {HOST_ADDRESS} from "../constants/consts";
+import {changePromptContext} from "../App";
 
 export function ChangeTaskPriority(props) {
     const task = props.task;
@@ -10,6 +11,7 @@ export function ChangeTaskPriority(props) {
 
 
     const onSubmit = (data) => {
+        changePromptContext(false, '')
         fetch(HOST_ADDRESS + '/tasks/change-priority', {
             method: 'PUT',
             mode: 'cors',
@@ -41,7 +43,7 @@ export function ChangeTaskPriority(props) {
                 <p>
                     Change Priority to
                     <br/>
-                    <select defaultValue={'DEFAULT'} ref={register} name={'priority'}>
+                    <select onChange={() => changePromptContext(true, "Change Task priority not finished")} defaultValue={'DEFAULT'} ref={register} name={'priority'}>
                         <option value="LOW">Low</option>
                         <option value="DEFAULT">Default</option>
                         <option value="HIGH">High</option>

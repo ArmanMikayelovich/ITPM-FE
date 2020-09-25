@@ -5,6 +5,7 @@ import {getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
 import MultiSelect from "react-multi-select-component";
 import {getUsersOfProject} from "../rest-service/ProjectService";
 import {getTaskById} from "../rest-service/TaskService";
+import {changePromptContext} from "../App";
 
 export function CreateCommentForm(props) {
     const taskId = props.taskId;
@@ -45,6 +46,7 @@ export function CreateCommentForm(props) {
     const {register, handleSubmit} = useForm();
 
     const onSubmit = (data) => {
+        changePromptContext(false, '');
         Object.assign(data, {notificationUsers: notifyingUsers.map(selected => selected.value)});
         alert(JSON.stringify(data));
         sendComment(data)
@@ -64,7 +66,7 @@ export function CreateCommentForm(props) {
                        name='publisherId' ref={register}/>
                 <input hidden={true} type='text' name='taskId' defaultValue={taskId} ref={register}/>
                 <p>Add comment <br/>
-                    <input type='textarea' aria-multiline={true} name='text' placeholder={"Comment text"}
+                    <input onChange={() => changePromptContext(true, "Adding comment not finished.")} type='textarea' aria-multiline={true} name='text' placeholder={"Comment text"}
                            ref={register}/>
                 </p>
 

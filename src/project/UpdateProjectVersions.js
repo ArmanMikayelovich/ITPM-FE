@@ -17,7 +17,7 @@ export function UpdateProjectVersions(props) {
     const updatePage = props.updatePage;
 
     const updateProjectVersion = (data) => {
-      /*fetch(HOST_ADDRESS + `/projects/${projectVersion.projectId}/versions`, {
+      fetch(HOST_ADDRESS + `/projects/${projectVersion.projectId}/versions`, {
             method: 'PUT',
             mode: 'cors',
             headers: {
@@ -34,7 +34,7 @@ export function UpdateProjectVersions(props) {
                          code - ${data.status} message: ${data.message}`));
                     }
                 }
-            ).catch(error => console.log(`an error occurred ${error}`));*/
+            ).catch(error => console.log(`an error occurred ${error}`));
         alert(JSON.stringify(data));
     }
 

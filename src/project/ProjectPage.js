@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useHistory, useLocation} from "react-router";
-import {getUserId, UserFullName, UserFullNameWithLinkToPage} from "../user/UserInfo";
+import {getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
 import {
     HOST_ADDRESS,
     LIST_DONE,
@@ -13,11 +13,10 @@ import {
 import {TaskList} from "../task/Tasks";
 import {UpdateProjectForm} from "./Projects";
 import {ProjectVersionsTable} from "./ProjectVersionsTable";
-import {CreateTask} from "../task/CreateTask";
 import {Link} from "react-router-dom";
 import {AddVersionToProject} from "./AddProjectVersion";
-import {UpdateProjectVersions} from "./UpdateProjectVersions";
 import {AttachUserToProject} from "./AttachUserToProject";
+import {onLinkClickAction} from "./confirm/onClickAction";
 
 export function ProjectPage() {
 
@@ -43,28 +42,28 @@ export function ProjectPage() {
         ).catch(error => console.log(`an error occurred ${error}`));
     }
 
-    let flag = true;
 
+    let pathname = `/create-task`;
 
     return (
         <div>
 
-            <Link onClick={() => flag ? alert("asd") : 'jb'} to={{
-                pathname:`/create-task`,
+            <Link onClick={e => onLinkClickAction(e)} to={{
+                pathname,
                 project: project
             }}> Create New Task.</Link>
             <br/>
             <br/>
-            <Link to={{
+            <Link onClick={e => onLinkClickAction(e)} to={{
                 pathname: `/backlog`,
                 project: project
             }}> BackLog Page </Link>
             <h3 style={{float: 'left'}}>{project?.name}</h3>
 
             <h3>Created at :{project.createdAt}</h3>
-<div>
-    <b>Description:</b>  {project.description}
-</div>
+            <div>
+                <b>Description:</b> {project.description}
+            </div>
 
             <div style={{float: 'right'}}>
                 <h4>{"Owner"}<UserFullNameWithLinkToPage userId={project?.creatorId}/></h4>
@@ -89,7 +88,7 @@ export function ProjectPage() {
                 <br/>
                 <AddVersionToProject project={project}/>
                 <br/>
-                <UpdateProjectVersions updateProject={updatePage} project={project}/>
+                {/*<UpdateProjectVersions updateProject={updatePage} project={project}/>*/}
                 <div style={{float: "right"}}>
                     <DeleteProject projectId={project.id}/>
                 </div>
@@ -196,31 +195,33 @@ function DeleteProject(props) {
     const projectId = props.projectId;
 
     const removeProject = (projectId) => {
-        fetch(HOST_ADDRESS + '/projects/' + projectId, {
-            method: 'DELETE',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json'
+        const isDeleting = window.confirm("Are you need to delete this project?");
+        if (isDeleting) {
+            fetch(HOST_ADDRESS + '/projects/' + projectId, {
+                method: 'DELETE',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json'
 
-            },
-        })
-            .then((response) => {
-                    if (response.status === 200) {
-                        history.push('/browse');
-                    } else {
-                        console.log(`Project ${projectId} deleting: status - ${response.status}`);
-                        return response;
+                },
+            })
+                .then((response) => {
+                        if (response.status === 200) {
+                            history.push('/browse');
+                        } else {
+                            console.log(`Project ${projectId} deleting: status - ${response.status}`);
+                            return response;
+                        }
                     }
-                }
-            )
+                )
 
-            .catch(error => console.log(`an error occurred ${error}`));
+                .catch(error => console.log(`an error occurred ${error}`));
+        }
     }
 
     return (
         <div>
             <button onClick={() => removeProject(projectId)}>Delete Project!</button>
-
         </div>
     );
 }

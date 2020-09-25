@@ -13,6 +13,7 @@ import {CloneTask} from "./CloneTask";
 import {MoveTask} from "./MoveTask";
 import {getFileInfosOfTask} from "../rest-service/FileService";
 import {FileNameWithHref} from "./FileNameWithHref";
+import {onLinkClickAction} from "../project/confirm/onClickAction";
 
 
 export function TaskPage() {
@@ -119,7 +120,9 @@ export function TaskPage() {
                     </h5>}
 
 
-                    <h5>Parent: </h5> {task?.parentId && <TaskByIdWithLinkToPage taskId={task?.parentId}/>}
+                    <h5>Parent: </h5> {task?.parentId &&
+                <TaskByIdWithLinkToPage taskId={task?.parentId}/>}{/*TODO show parent only if task has it*/}
+
                     {subTasks &&
                     <div>
                         <ul><b>Subtasks</b>
@@ -161,7 +164,7 @@ export function TaskPage() {
                         padding: '10px',
                     }}>
                         <MoveTask task={task}/>
-                        <Link to={{
+                        <Link onClick={e => onLinkClickAction(e)} to={{
                             pathname: `/update-task`,
                             task: task
                         }}>Update Task</Link>

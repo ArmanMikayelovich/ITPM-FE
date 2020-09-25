@@ -7,6 +7,7 @@ import MultiSelect from "react-multi-select-component";
 import {getTasksOfProject} from "../rest-service/TaskService";
 import {HOST_ADDRESS} from "../constants/consts";
 import {attachFileToTask} from "../rest-service/FileService";
+import {changePromptContext} from "../App";
 
 export function CreateTask(props) {
     const location = useLocation();
@@ -35,6 +36,7 @@ export function CreateTask(props) {
         }
     }
     const FetchTask = data => {
+        changePromptContext(false, '');
         Object.assign(data, {affectedProjectVersions: selectedProjectVersions.map(data => data.value)})
         if (data.triggeredById === '') {
             data.triggerType = null;
@@ -92,7 +94,8 @@ export function CreateTask(props) {
                 </p>
                 <p>
                     Task type:<br/>
-                    <select defaultValue={'TASK'} ref={register} name={'taskType'}>
+                    <select onChange={() => changePromptContext(true, "Create task not finished")} defaultValue={'TASK'}
+                            ref={register} name={'taskType'}>
                         <option value="TASK">Task</option>
                         <option value="SUBTASK">Sub task</option>
                         <option value="EPIC">Epic</option>
@@ -104,7 +107,8 @@ export function CreateTask(props) {
                 <p>
                     Task Priority:
                     <br/>
-                    <select defaultValue={'DEFAULT'} ref={register} name={'priority'}>
+                    <select onChange={() => changePromptContext(true, "Create task not finished")}
+                            defaultValue={'DEFAULT'} ref={register} name={'priority'}>
                         <option value="LOW">Low</option>
                         <option value="DEFAULT">Default</option>
                         <option value="HIGH">High</option>
@@ -113,18 +117,21 @@ export function CreateTask(props) {
 
                 <p>
                     Fix version
-                    <select ref={register} name={'projectVersionId'}>
+                    <select onChange={() => changePromptContext(true, "Create task not finished")} ref={register}
+                            name={'projectVersionId'}>
                         {Array.isArray(projectVersions) && projectVersions?.map(version => <option
                             value={version.id}>{version.version}</option>)}
                     </select>
                 </p>
                 ADDITIONAL
                 <p>Description<br/>
-                    <textarea ref={register} name={'description'} placeholder={"Description"}/>
+                    <textarea onChange={() => changePromptContext(true, "Create task not finished")} ref={register}
+                              name={'description'} placeholder={"Description"}/>
                 </p>
                 <p>
                     Assigned user
-                    <select ref={register} name={'assignedUserId'}>
+                    <select onChange={() => changePromptContext(true, "Create task not finished")} ref={register}
+                            name={'assignedUserId'}>
                         <option value={''}>None</option>
                         {assigningUsers?.map(user => <option
                             value={user.userId}>{user.firstName + ' ' + user.lastName}</option>)}
@@ -137,14 +144,22 @@ export function CreateTask(props) {
                         return {label: data.version, value: data.id}
                     })}
                     value={selectedProjectVersions}
-                    onChange={setSelectedProjectVersions}
+
+                    onChange={(e) => {
+                        setSelectedProjectVersions(e);
+                        changePromptContext(true, "Create task not finished");
+                    }}
+
                     labelledBy={"Select Affected versions"}
                 />
 
-                <p>Triggered By: </p>
                 <br/>
+                Triggered By:
 
-                <select onChange={handleSelectTriggerChange}
+                <select onChange={(e) => {
+                    handleSelectTriggerChange(e);
+                    changePromptContext(true, "Create task not finished")
+                }}
 
                         ref={register} name={"triggeredById"} defaultValue={null}>
                     <option value={null}>{''}</option>
@@ -152,7 +167,7 @@ export function CreateTask(props) {
                         value={task.id}>{task.name}</option>)}
                 </select>
                 <p>
-                    <select hidden={isTriggerInputHidden} ref={register} name={'triggerType'}
+                    <select onChange={() => changePromptContext(true, "Create task not finished")} hidden={isTriggerInputHidden} ref={register} name={'triggerType'}
                             defaultValue={'BLOCKED_BY'}>
                         <option value={"BLOCKED_BY"}>Blocked by</option>
                         <option value={"TRIGGERED_BY"}>Triggered by</option>
@@ -160,17 +175,13 @@ export function CreateTask(props) {
                 </p>
                 <br/>
                 <p>
-                    Parent
-                    <select ref={register} defaultValue={null} name={'parentId'}>
-                        <option value={null}/>
-                        {Array.isArray(tasksOfProject) && tasksOfProject?.map(task => <option
-                            value={task.id}>{task.name}</option>)}
-                    </select>
-                </p>
-                <p>
                     Attach files:
                     <br/>
-                    <input type={'file'} multiple={true} onChange={onFileChangeHandler} name={'uploadedFiles'}
+                    <input  type={'file'} multiple={true} onChange={event => {
+                        onFileChangeHandler(event);
+                        changePromptContext(true, "Create task not finished");
+
+                    }} name={'uploadedFiles'}
                            ref={register}/>
                 </p>
                 <input type="submit"/>

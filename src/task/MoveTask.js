@@ -3,6 +3,7 @@ import {useForm} from "react-hook-form";
 import {getProjectsOfUser, getProjectVersions} from "../rest-service/ProjectService";
 import {getUserId} from "../user/UserInfo";
 import {HOST_ADDRESS} from "../constants/consts";
+import {changePromptContext} from "../App";
 
 export function MoveTask(props) {
     const task = props?.task;
@@ -17,6 +18,7 @@ export function MoveTask(props) {
 
 
     const fetchCloneTask = data => {
+        changePromptContext(false, '')
         data.creatorId = getUserId();
         data.id = task?.id;
         let isClear = true;
@@ -56,11 +58,15 @@ export function MoveTask(props) {
             <form onSubmit={handleSubmit(fetchCloneTask)}>
 
 
-                <select ref={register}  onChange={handleProjectChange} name={'projectId'}>
+                <select ref={register}  onChange={e => {
+                    handleProjectChange(e);
+                    changePromptContext(true, "Move task to  project not finished");
+                }} name={'projectId'}>
                     <option value={''}>Choose Project</option>
                     {projectsOfUser?.map(project => <option value={project.id}>{project.name}</option>)}
                 </select>
-                <select ref={register} name={'projectVersionId'}>
+                <select onChange={() =>  changePromptContext(true, "Move task to  project not finished")}
+                        ref={register} name={'projectVersionId'}>
                     <option value={''}>Choose Project Id </option>
 
                     {projectVersions?.map(version => <option value={version.id}>{version.version}</option>)}

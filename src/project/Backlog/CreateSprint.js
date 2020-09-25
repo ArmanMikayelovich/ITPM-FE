@@ -3,6 +3,7 @@ import {useForm} from "react-hook-form";
 import {getUserId} from "../../user/UserInfo";
 import {HOST_ADDRESS} from "../../constants/consts";
 import * as PropTypes from "prop-types";
+import {changePromptContext} from "../../App";
 
 export function CreateSprint(props) {
     const project = props.project;
@@ -11,6 +12,7 @@ export function CreateSprint(props) {
     const {register, handleSubmit} = useForm();
 
     const onSubmit = data => {
+        changePromptContext(false, '');
         fetch(HOST_ADDRESS + '/sprints', {
             method: 'POST',
             mode: 'cors',
@@ -42,7 +44,8 @@ export function CreateSprint(props) {
                 <input ref={register} type={'text'} name={'creatorId'} hidden={true} defaultValue={getUserId()}/>
                 <input ref={register} type={'text'} name={'projectId'} hidden={true} defaultValue={project.id}/>
                 <h4>Input Sprint name</h4>
-                    <input ref={register} type={'text'} name={'name'} placeholder={'Sprint name'}/>
+                <input onChange={() => changePromptContext(true, "Create sprint - not finished")} ref={register}
+                       type={'text'} name={'name'} placeholder={'Sprint name'}/>
                 <br/>
 
                 <input type={'submit'} value={"Create Sprint."}/>

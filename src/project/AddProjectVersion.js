@@ -1,12 +1,14 @@
 import React from "react";
 import {useForm} from "react-hook-form";
 import {HOST_ADDRESS} from "../constants/consts";
+import {changePromptContext} from "../App";
 
 export function AddVersionToProject(props) {
     const project = props.project;
     const {register, handleSubmit} = useForm();
 
     const onSubmit = data => {
+        changePromptContext(false,'')
         fetch(HOST_ADDRESS + `/projects/${project.id}/versions`, {
             method: 'POST',
             mode: 'cors',
@@ -32,12 +34,13 @@ export function AddVersionToProject(props) {
 
 
             <form onSubmit={handleSubmit(onSubmit)}>Create Project version.<br/>
-                <input type={'text'} ref={register} name={'projectId'} defaultValue={project.id} hidden={true}/>
+                <input onChange={() => changePromptContext(true, "add project version not finished")} type={'text'} ref={register} name={'projectId'} defaultValue={project.id} hidden={true}/>
 
                     Version name:&nbsp;&nbsp; <input type={'text'} required={true} ref={register} name={'version'}/>
 
                     <br/>
-                    Status:&nbsp;&nbsp; <select ref={register} name={'versionStatus'} defaultValue={"UNREALISED"}>
+                    Status:&nbsp;&nbsp;
+                <select onChange={() => changePromptContext(true, "add project version not finished")} ref={register} name={'versionStatus'} defaultValue={"UNREALISED"}>
                         <option value={"UNREALISED"}>Unrealised</option>
                         <option value={"REALISED"}>Realised</option>
                         <option value={"ARCHIVED"}>Archived</option>

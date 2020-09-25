@@ -1,6 +1,7 @@
 import React, {useEffect, useLayoutEffect, useState} from "react";
 import {HOST_ADDRESS} from "../constants/consts";
 import {Link} from "react-router-dom";
+import {onLinkClickAction} from "../project/confirm/onClickAction";
 
 export function UserInfo() {
     return (
@@ -39,7 +40,7 @@ export function UserFullNameWithLinkToPage(props) {
 
     return (
         <div>
-            <li key={userId}><Link to={{
+            <li key={userId}><Link onClick={e => onLinkClickAction(e)} to={{
                 pathname: `/user`,
                 user: user
             }}> <UserFullName user={user} /> </Link></li>
