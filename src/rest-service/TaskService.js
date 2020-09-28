@@ -21,7 +21,6 @@ export async function getAllFreeTasksOfProject(projectId) {
         mode: 'cors',
         headers: {
             'Content-Type': 'application/json'
-
         },
     });
     return await response.json();

@@ -23,9 +23,11 @@ export function FreeTaskTable(props) {
                     <th>Trigger Task</th>
                     <th>TriggerType</th>
                     <th colSpan={2}>Attach to Sprint</th>
-                </tr></thead>
+                </tr>
+                </thead>
                 <tbody>
-                {tasks?.map(task => <TaskInfo notFinishedSprints={notFinishedSprints} task={task}/>)}
+                { Array.from(tasks)?.map(task => <TaskInfo notFinishedSprints={notFinishedSprints}
+                                                                                task={task}/>)}
                 </tbody>
 
             </table>

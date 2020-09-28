@@ -185,8 +185,8 @@ export function ProjectWithLinkToPage(props) {
     return (
         <div>
             <li><Link onClick={e => onLinkClickAction(e) } to={{
-                pathname: `/project`,
-                project: project
+                pathname: `/projects/${project?.id}`,
+
             }}> {project?.name} </Link></li>
         </div>
     )
@@ -212,7 +212,6 @@ export function BrowseProjects() {
                 <br/>
                 <Link onClick={e => onLinkClickAction(e) } to={{
                     pathname: `/create-project`,
-                    user: user
                 }}> Create New Project.</Link>
             </p>
         </div>

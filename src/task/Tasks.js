@@ -156,8 +156,7 @@ export function TaskByIdWithLinkToPage(props) {
     return (
         <div>
             <Link onClick={e => onLinkClickAction(e)} to={{
-                pathname: `/task`,
-                task: task
+                pathname: `/projects/${task?.projectId}/tasks/${task?.id}`,
             }}> Task : {task?.name} . Type: {task?.taskType} </Link>
         </div>
     )
@@ -260,8 +259,7 @@ export function TaskWithLinkToPage(props) {
     return (
         <div style={{color: task.priority === 'HIGH' ? 'red' : ""}}>
             <li key={task.id}><Link onClick={e => onLinkClickAction(e)} to={{
-                pathname: `/task`,
-                task: task
+                pathname: `/projects/${task.projectId}/tasks/${task.id}`,
             }}> Task : {task.name} . Type: {task.taskType} </Link></li>
         </div>
     )

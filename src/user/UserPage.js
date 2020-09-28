@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {getUserId, UserFullName} from "./UserInfo";
-import {useLocation} from "react-router";
+import {getUserById, getUserId, UserFullName} from "./UserInfo";
+import {useLocation, useParams} from "react-router";
 import {HOST_ADDRESS} from "../constants/consts";
 import {TaskList} from "../task/Tasks";
 import {useForm} from "react-hook-form";
@@ -12,14 +12,16 @@ const IN_PROGRESS = "IN_PROGRESS";
 const DONE = "DONE";
 const SHOW_ALL = 'all';
 export function UserPage() {
-    const location = useLocation();
-    const user = location.user;
+    let {userId} = useParams();
 
+    const [user, setUser] = useState();
     const [filter, setFilter] = useState({projectId:'all', sort: false});
 
     const [projects, setProjects] = useState();
     useEffect(() => {
-        fetch(HOST_ADDRESS + `/projects/by-user/${user.userId}`, {
+
+        getUserById(userId).then(data => setUser(data));
+        fetch(HOST_ADDRESS + `/projects/by-user/${userId}`, {
             method: 'GET',
             mode: 'cors',
             headers: {
@@ -30,7 +32,7 @@ export function UserPage() {
             const promise = response.json();
             promise.then(data => setProjects(data.content));
         })
-    }, [user,filter]);
+    }, [userId,filter]);
 
     const {register, handleSubmit} = useForm();
 
@@ -51,7 +53,7 @@ export function UserPage() {
                 <label htmlFor="sort"> Sort Tasks by priority</label>
                 <input type={'submit'} value={"Filter"}/>
             </form>
-            {filter?.projectId === 'all' ? <ProjectsOfUser sort={filter?.sort} userId={user.userId}/> :
+            {filter?.projectId === 'all' ? <ProjectsOfUser sort={filter?.sort} userId={userId}/> :
                 <TasksOfUserInProject sort={filter?.sort} key={filter?.projectId} userId={getUserId()} projectId={filter.projectId}/>}
 
         </div>
@@ -70,16 +72,16 @@ function AboutUser(props) {
             padding: '20px'
         }}>
             <h5>Full Name:</h5>
-            <UserFullName user={user}/>
+            <p>{user?.firstName + " " + user?.lastName} </p>
 
             <h5>Email:</h5>
-            <p>{user.email}</p>
+            <p>{user?.email}</p>
 
             <h5>Registration date:</h5>
-            <p>{user.registrationDate}</p>
+            <p>{user?.registrationDate}</p>
 
         </div>
-    )
+    );
 }
 
 function ProjectsOfUser(props) {
@@ -99,12 +101,12 @@ function ProjectsOfUser(props) {
 
                 let json = response.json();
                 json.then(data => {
-                    let content = data.content;
                     let projs = []
-                    console.log(data.content)
-                    for (let project of content) {
-                        projs.push(project);
-                    }
+                    console.log(data)
+                    data.content &&  Array.from(data.content).forEach(project => projs.push(project));
+                    // for (let project of Array.from(content)) {
+                    //     projs.push(project);
+                    // }
                     setProjects(projs);
                     setIsFetched(true);
                 });

@@ -19,6 +19,7 @@ export function DetachTaskFromSprint(props) {
         }).then(response => {
             if (response.status === 200) {
                 alert("Task detached from Sprint.")
+                window.location.reload(false);
             } else {
                 const json = response.json();
                 json.then(error => {
@@ -33,13 +34,12 @@ export function DetachTaskFromSprint(props) {
     }, [sprint]);
 
     return (
-        <div><h4>Detach task from sprint</h4>
+        <div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <p>Select task</p>
+                Detach task from sprint&nbsp;&nbsp;
                 <select ref={register} name={'taskId'}>
                     {tasks?.map(task => <option value={task.id}>{task.name}</option>)}
                 </select>
-
                 <input type={"submit"} value={"Detach"}/>
             </form>
         </div>

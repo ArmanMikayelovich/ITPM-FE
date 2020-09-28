@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useHistory, useLocation} from "react-router";
+import {useHistory, useParams} from "react-router";
 import {getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
 import {
     HOST_ADDRESS,
@@ -17,65 +17,49 @@ import {Link} from "react-router-dom";
 import {AddVersionToProject} from "./AddProjectVersion";
 import {AttachUserToProject} from "./AttachUserToProject";
 import {onLinkClickAction} from "./confirm/onClickAction";
+import {getProjectById} from "../rest-service/ProjectService";
 
 export function ProjectPage() {
+    let {projectId} = useParams();
+    const [project, setProject] = useState();
 
-    const location = useLocation()
+    useEffect(() => {
+        getProjectById(projectId).then(data => setProject(data));
+    },[projectId])
 
-    const [project, setProject] = useState(location.project);
-    const updatePage = (id) => {
-        fetch(HOST_ADDRESS + '/projects/by-id/' + id, {
-            method: 'GET',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-        }).then((response) => {
-                if (response.status === 200) {
-                    let json = response.json();
-                    json.then(data => setProject(data));
-                } else {
-                    console.log("An error occurred on updating project page.")
-                }
-            }
-        ).catch(error => console.log(`an error occurred ${error}`));
+    const updatePage = () => {
+        window.location.reload(false);
     }
-
-
-    let pathname = `/create-task`;
 
     return (
         <div>
 
             <Link onClick={e => onLinkClickAction(e)} to={{
-                pathname,
-                project: project
+                pathname: `/projects/${project?.id}/create-task`,
             }}> Create New Task.</Link>
             <br/>
             <br/>
             <Link onClick={e => onLinkClickAction(e)} to={{
-                pathname: `/backlog`,
-                project: project
+                pathname: `/projects/${project?.id}/backlog`,
             }}> BackLog Page </Link>
             <h3 style={{float: 'left'}}>{project?.name}</h3>
 
-            <h3>Created at :{project.createdAt}</h3>
+            <h3>Created at :{project?.createdAt}</h3>
             <div>
-                <b>Description:</b> {project.description}
+                <b>Description:</b> {project?.description}
             </div>
 
             <div style={{float: 'right'}}>
                 <h4>{"Owner"}<UserFullNameWithLinkToPage userId={project?.creatorId}/></h4>
-                <UsersInProjectList projectId={project.id}/>
-                <ProjectVersionsTable project={project}/>
+                <UsersInProjectList projectId={projectId}/>
+                <ProjectVersionsTable projectId={projectId}/>
             </div>
 
             <br/>
 
-            <Board projectId={project.id}/>
+            <Board projectId={projectId}/>
             <br/>
-            {project.creatorId === getUserId().toString() &&
+            {project?.creatorId === getUserId().toString() &&
             <div style={{
                 float: "right",
                 margin: '10px',
@@ -83,14 +67,14 @@ export function ProjectPage() {
                 'boxShadow': '0 2px 2px #B22222',
                 width: ' 500px',
                 padding: '20px'
-            }}><AttachUserToProject projectId={project?.id}/>
+            }}><AttachUserToProject projectId={projectId}/>
                 <UpdateProjectForm updateProject={updatePage} project={project}/>
                 <br/>
                 <AddVersionToProject project={project}/>
                 <br/>
                 {/*<UpdateProjectVersions updateProject={updatePage} project={project}/>*/}
                 <div style={{float: "right"}}>
-                    <DeleteProject projectId={project.id}/>
+                    <DeleteProject projectId={projectId}/>
                 </div>
             </div>}
 
@@ -162,7 +146,7 @@ function UsersInProjectList(props) {
                 let json = response.json();
                 json.then(data => {
                     let content = data.content;
-                    let userList = content.map(user => <div key={user.id}>
+                    let userList = content?.map(user => <div key={user.id}>
                             <br/>
                             <UserFullNameWithLinkToPage userId={user.userId}/>
                             role: {user.role}

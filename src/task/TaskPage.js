@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
-import {useLocation} from "react-router";
+import {useParams} from "react-router";
 import {getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
 import {HOST_ADDRESS} from "../constants/consts";
 import {CommentList, CreateCommentForm} from "../comment/Comments";
-import {DeleteTask, TaskByIdWithLinkToPage, TaskWithLinkToPage} from "./Tasks";
+import {DeleteTask, TaskByIdWithLinkToPage} from "./Tasks";
 import {ChangeTaskState} from "./ChangeTaskState";
 import {ChangeTaskPriority} from "./ChangePriority";
 import {ProjectWithLinkToPage} from "../project/Projects";
@@ -14,32 +14,22 @@ import {MoveTask} from "./MoveTask";
 import {getFileInfosOfTask} from "../rest-service/FileService";
 import {FileNameWithHref} from "./FileNameWithHref";
 import {onLinkClickAction} from "../project/confirm/onClickAction";
-
+import {getTaskById} from "../rest-service/TaskService";
+import * as PropTypes from "prop-types";
+import {SubTaskTable} from "./SubTaskTable";
+import {DeleteFileButton} from "./DeleteFileButton";
 
 export function TaskPage() {
-    let location = useLocation();
-    const [task, setTask] = useState(location.task);
+    let {taskId, projectId} = useParams();
+
+    const [task, setTask] = useState();
     const [subTasks, setSubTasks] = useState(null);
     const [files, setFiles] = useState([]);
     useEffect(() => {
-        if (task === undefined || task === null) {
-            const taskId = location.state.task.id
-            fetch(HOST_ADDRESS + '/tasks/' + taskId, {
-                method: 'GET',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
-                },
-            }).then((response) => {
 
-                    let json = response.json();
-                    json.then(data => setTask(data));
-                }
-            ).catch(error => console.log(`an error occurred ${error}`));
-        }
+        getTaskById(taskId).then(data => setTask(data));
 
-        fetch(HOST_ADDRESS + `/tasks/${task.id}/sub-tasks`, {
+        fetch(HOST_ADDRESS + `/tasks/${taskId}/sub-tasks`, {
             method: 'GET',
             mode: 'cors',
             headers: {
@@ -56,27 +46,13 @@ export function TaskPage() {
             )
 
             .catch(error => console.log(`Fail to save Task. An error occurred ${error}`));
-        getFileInfosOfTask(task.id).then(data => setFiles(data));
+        getFileInfosOfTask(taskId).then(data => setFiles(data));
 
-    }, [task]);
+    }, [taskId]);
 
 
     const reRenderPage = () => {
-        fetch(HOST_ADDRESS + '/tasks/' + task.id, {
-            method: 'GET',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            },
-        }).then((response) => {
-
-                let json = response.json();
-                json.then(data => setTask(data));
-            }
-        ).catch(error => console.log(`an error occurred ${error}`));
-
-
+        window.location.reload(false);
     }
 
 
@@ -96,7 +72,7 @@ export function TaskPage() {
                     <h4 style={{float: 'right', 'borderRight': '30px solid transparent'}}> Creator:<br/>
                         <UserFullNameWithLinkToPage
                             userId={task?.creatorId}/></h4>
-                    <AssignedUserWithAssignToMeButton task={task}/>
+                    <AssignedUserWithAssignToMeButton assignedUserId={task?.assignedUserId} taskId={taskId}/>
                     <br/>
                     <br/>
 
@@ -123,13 +99,8 @@ export function TaskPage() {
                     <h5>Parent: </h5> {task?.parentId &&
                 <TaskByIdWithLinkToPage taskId={task?.parentId}/>}{/*TODO show parent only if task has it*/}
 
-                    {subTasks &&
-                    <div>
-                        <ul><b>Subtasks</b>
-                            {subTasks.map(task => <TaskWithLinkToPage task={task}/>)}
-                        </ul>
-                    </div>}
-                    <h4>Project :<ProjectWithLinkToPage projectId={task?.projectId}/></h4>
+
+                    <h4>Project :<ProjectWithLinkToPage projectId={projectId}/></h4>
                     <h5>Project version id : <ProjectVersion versionId={task?.projectVersionId}/></h5>
                     <ul>Affected Project versions
                         {task?.affectedProjectVersions && task?.affectedProjectVersions.map(versionId => <ProjectVersion
@@ -165,10 +136,12 @@ export function TaskPage() {
                     }}>
                         <MoveTask task={task}/>
                         <Link onClick={e => onLinkClickAction(e)} to={{
-                            pathname: `/update-task`,
-                            task: task
+                            pathname: `/projects/${task?.projectId}/tasks/${task?.id}/update`,
                         }}>Update Task</Link>
-
+                        <br/>
+                        <Link onClick={e => onLinkClickAction(e)} to={{
+                            pathname: `/projects/${projectId}/tasks/${taskId}/create-subtask`
+                        }}>Create SubTask</Link>
                     </div>
                     }
 
@@ -177,7 +150,7 @@ export function TaskPage() {
                         border: '3px solid red',
                         padding: '5px',
                     }}>
-                        <DeleteTask taskId={task.id}/></div>}
+                        <DeleteTask taskId={taskId}/></div>}
                 </div>
 
             </div>
@@ -188,9 +161,17 @@ export function TaskPage() {
                 border: '3px solid green',
                 padding: '10px',
             }}><h5>Description </h5> <p>{task?.description}</p></div>
-            {files.map(file => <FileNameWithHref key={file.id} fileInfo={file}/>)}
+            {Array.from(files).map(file => <div>
+                <FileNameWithHref key={file.id} fileInfo={file}/>
+                {task.creatorId === getUserId().toString() && <DeleteFileButton taskId={taskId} fileId={file?.id} />}
+            </div>)}
             <br/>
-
+            {subTasks && Array.from(subTasks).length!==0 &&
+            <div>
+                <ul><b>Subtasks</b>
+                    { <SubTaskTable tasks={subTasks}/>}
+                </ul>
+            </div>}
             {task?.id && <div style={{float: 'center'}}>
                 <CommentList task={task} name={'All comments'}/>
                 <CreateCommentForm updatePage={reRenderPage} taskId={task?.id}/>
@@ -202,8 +183,8 @@ export function TaskPage() {
 
 function AssignedUserWithAssignToMeButton(props) {
 
-    const [task, setTask] = useState(props.task);
-    const taskId = task?.id;
+    const taskId = props.taskId;
+    const assignedUserId = props.assignedUserId;
     const userId = getUserId();
 
     const setUser = () => fetch(HOST_ADDRESS + '/tasks/attach', {
@@ -222,16 +203,15 @@ function AssignedUserWithAssignToMeButton(props) {
     }).then((response) => {
             if (response.status === 200) {
                 alert("attached to me!");
-                let assigned = {assignedUserId: userId};
-                setTask(assigned);
+                window.location.reload(false);
             }
         }
     ).catch(error => console.log(`an error occurred ${error}`));
 
-    if (task?.assignedUserId !== "") {
+    if (assignedUserId) {
         return (
             <div style={{float: 'right', 'borderRight': '30px solid transparent'}}><h4><br/> Assigned to: <br/>
-                <UserFullNameWithLinkToPage userId={task?.assignedUserId}/></h4>
+                <UserFullNameWithLinkToPage userId={assignedUserId}/></h4>
             </div>
         )
     } else {
@@ -245,6 +225,9 @@ function AssignedUserWithAssignToMeButton(props) {
 
         )
     }
+}
 
-
+AssignedUserWithAssignToMeButton.propTypes = {
+    taskId: PropTypes.any.isRequired,
+    assignedUserId: PropTypes.any.isRequired
 }

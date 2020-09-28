@@ -7,27 +7,31 @@ export function ProjectVersion(props) {
     const [projectVersion, setProjectVersion] = useState();
 
         useEffect(() => {
-            fetch(HOST_ADDRESS + `/projects/versions/${versionId}`, {
-                method: 'GET',
-                mode: 'cors',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                },
-            }).then((response) => {
+            if (versionId) {
 
-                    if (response.status === 200) {
-                        let json = response.json();
-                        json.then(data => {
-                            setProjectVersion(data);
-                        });
-                    } else {
-                        console.log("An error occurred: " + response.status)
+
+                fetch(HOST_ADDRESS + `/projects/versions/${versionId}`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*',
+                    },
+                }).then((response) => {
+
+                        if (response.status === 200) {
+                            let json = response.json();
+                            json.then(data => {
+                                setProjectVersion(data);
+                            });
+                        } else {
+                            console.log("An error occurred: " + response.status)
+                        }
+
                     }
-
-                }
-            ).catch(error => console.log(`an error occurred ${error}`));
+                ).catch(error => console.log(`an error occurred ${error}`));
+            }
         }, [versionId])
 
 

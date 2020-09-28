@@ -14,12 +14,12 @@ import {CreateSprint} from "./CreateSprint";
 import {DetachTaskFromSprint} from "./DetachTaskFromSprint";
 
 export function AllSprints(props) {
-    const project = props.project;
+    const projectId = props.projectId;
     const [sprints, setSprints] = useState();
     const [hasActiveSprint, setHasActiveSprint] = useState();
 
     const updateComponent = () => {
-        fetch(HOST_ADDRESS + `/sprints/by-project/${project.id}`, {
+        fetch(HOST_ADDRESS + `/sprints/by-project/${projectId}`, {
             method: 'GET',
             mode: 'cors',
             headers: {
@@ -47,7 +47,7 @@ export function AllSprints(props) {
         }
     }
     useEffect(() => {
-        fetch(HOST_ADDRESS + `/sprints/by-project/${project.id}`, {
+        fetch(HOST_ADDRESS + `/sprints/by-project/${projectId}`, {
             method: 'GET',
             mode: 'cors',
             headers: {
@@ -63,7 +63,7 @@ export function AllSprints(props) {
             }
         ).catch(error => console.log(`an error occurred ${error}`));
 
-    }, [project]);
+    }, [projectId]);
 
     useEffect(() => {
         checkHasActiveSprint(sprints);
@@ -72,7 +72,7 @@ export function AllSprints(props) {
 
     return (
         <div>
-            <CreateSprint project={project} updatePage={updateComponent} />
+            <CreateSprint projectId={projectId} updatePage={updateComponent} />
             {sprints?.map(sprint => <TaskBoard key={sprint.id} hasActiveSprint={hasActiveSprint}  sprint={sprint}/>)}
         </div>
     )
@@ -97,7 +97,6 @@ function TaskBoard(props) {
             }
         ).catch(error => console.log(`an error occurred ${error}`));
     }
-    const updateAllSprints = props.updateAllSprints;
     return (
         <div style={{padding: '10px'}}>
             <h4>{`${sprint?.name} : ${sprint?.startDate === null && sprint.deadLine === null ? "Not started yet." :

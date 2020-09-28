@@ -66,10 +66,20 @@ export function CreateCommentForm(props) {
                        name='publisherId' ref={register}/>
                 <input hidden={true} type='text' name='taskId' defaultValue={taskId} ref={register}/>
                 <p>Add comment <br/>
-                    <input onChange={() => changePromptContext(true, "Adding comment not finished.")} type='textarea' aria-multiline={true} name='text' placeholder={"Comment text"}
+                    <textarea style={{
+                        width:'450px',
+                        height: '120px',
+                        resize: 'none'
+                    }}
+                              onChange={() => changePromptContext(true, "Adding comment not finished.")}
+                           name='text'
+                           placeholder={"Comment text"}
                            ref={register}/>
                 </p>
 
+                <p>
+                    Select user(s) to notify.
+                </p>
                 <MultiSelect
                     options={usersOfProject?.map(user => {
                         return {label: user.firstName + ' ' + user.lastName, value: user.userId}

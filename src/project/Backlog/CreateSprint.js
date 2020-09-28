@@ -6,7 +6,7 @@ import * as PropTypes from "prop-types";
 import {changePromptContext} from "../../App";
 
 export function CreateSprint(props) {
-    const project = props.project;
+    const projectId = props.projectId;
     const updatePage = props.updatePage;
 
     const {register, handleSubmit} = useForm();
@@ -38,16 +38,20 @@ export function CreateSprint(props) {
     }
 
     return (
-        <div>
+        <div style={{
+            border: '1px  black',
+            borderStyle: 'groove',
+            width: '250px',
+            padding: '25px'
+        }}>
             Create new Sprint.
             <form onSubmit={handleSubmit(onSubmit)}>
                 <input ref={register} type={'text'} name={'creatorId'} hidden={true} defaultValue={getUserId()}/>
-                <input ref={register} type={'text'} name={'projectId'} hidden={true} defaultValue={project.id}/>
-                <h4>Input Sprint name</h4>
-                <input onChange={() => changePromptContext(true, "Create sprint - not finished")} ref={register}
-                       type={'text'} name={'name'} placeholder={'Sprint name'}/>
-                <br/>
+                <input ref={register} type={'text'} name={'projectId'} hidden={true} defaultValue={projectId}/>
 
+                Name:&nbsp;&nbsp;
+                <input onChange={() => changePromptContext(true, "Create sprint - not finished")} ref={register}
+                       type={'text'} name={'name'} placeholder={'Sprint name'}/>&nbsp;&nbsp;
                 <input type={'submit'} value={"Create Sprint."}/>
             </form>
 
@@ -56,7 +60,7 @@ export function CreateSprint(props) {
 }
 
 CreateSprint.propTypes = {
-    project: PropTypes.element.isRequired,
+    projectId: PropTypes.string.isRequired,
     updatePage: PropTypes.func.isRequired
 
 };

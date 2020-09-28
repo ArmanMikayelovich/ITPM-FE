@@ -22,6 +22,7 @@ export function AttachTaskToSprint(props) {
             }).then(response => {
                 if (response.status === 200) {
                     alert("Task attached to Sprint.")
+                    window.location.reload(false);
                 } else {
                     const json = response.json();
                     json.then(error => {

@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from "react";
 import {HOST_ADDRESS} from "../constants/consts";
+import * as PropTypes from "prop-types";
 
 export function ProjectVersionsTable(props) {
-    const project = props.project;
+    const projectId = props.projectId;
     const [versions, setVersions] = useState();
     useEffect(() => {
-        fetch(HOST_ADDRESS + `/projects/${project.id}/versions`, {
+        fetch(HOST_ADDRESS + `/projects/${projectId}/versions`, {
             method: 'GET',
             mode: 'cors',
             headers: {
@@ -39,7 +40,7 @@ export function ProjectVersionsTable(props) {
             )
 
             .catch(error => console.log(`an error occurred ${error}`));
-    }, [project]);
+    }, [projectId]);
 
     return (
         <div>
@@ -57,4 +58,8 @@ export function ProjectVersionsTable(props) {
         </div>
     )
 
+}
+
+ProjectVersionsTable.propTypes = {
+    projectId: PropTypes.string.isRequired
 }

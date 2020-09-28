@@ -1,16 +1,17 @@
 import {useHistory, useParams} from "react-router";
-import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import {getUserId} from "../user/UserInfo";
+import React, {useEffect, useState} from "react";
 import {getProjectVersions, getUsersOfProject} from "../rest-service/ProjectService";
-import MultiSelect from "react-multi-select-component";
 import {getTasksOfProject} from "../rest-service/TaskService";
+import {changePromptContext} from "../App";
 import {HOST_ADDRESS} from "../constants/consts";
 import {attachFileToTask} from "../rest-service/FileService";
-import {changePromptContext} from "../App";
+import {getUserId} from "../user/UserInfo";
+import MultiSelect from "react-multi-select-component";
 
-export function CreateTask() {
-    const {projectId} = useParams();
+export function CreateSubTask() {
+    const {projectId,taskId: parentId} = useParams();
+
     const history = useHistory();
 
     const {register, handleSubmit,errors} = useForm();
@@ -84,6 +85,7 @@ export function CreateTask() {
             <input hidden={true} type='text' name={'projectId'} defaultValue={projectId} ref={register}/>
             <input hidden={true} type='text' name={'taskState'} defaultValue={'TODO'} ref={register}/>
             <input hidden={true} type='text' name={'creatorId'} defaultValue={getUserId()} ref={register}/>
+            <input hidden={true} type='text' name={'parentId'} defaultValue={parentId} ref={register}/>
 
 
             <form onSubmit={handleSubmit(FetchTask)}>
@@ -94,14 +96,9 @@ export function CreateTask() {
                 </p>
                 <p>
                     Task type:&nbsp;&nbsp;
-                    <select onChange={() => changePromptContext(true, "Create task not finished")} defaultValue={'TASK'}
+                    <select onChange={() => changePromptContext(true, "Create task not finished")} defaultValue={'SUBTASK'}
                             ref={register({ required: true })} name={'taskType'}>
-                        <option value="TASK">Task</option>
                         <option value="SUBTASK">Sub task</option>
-                        <option value="EPIC">Epic</option>
-                        <option value="BUG">Bug</option>
-                        <option value="STORY">Story</option>
-                        <option value="CHANGE">Change</option>
                     </select>
                     {errors.nataskTypeme && <p style={{color:'red'}}> Task type required </p>}
                 </p>
@@ -126,15 +123,15 @@ export function CreateTask() {
                 </select>
                     {errors.projectVersionId && <p style={{color:'red'}}> Fix version required </p>}
                 </p>
-             Description&nbsp;&nbsp;
+                Description&nbsp;&nbsp;
                 <p>
                     <textarea  style={{
                         width:'380px',
                         height: '250px',
                         resize: 'none'
                     }} onChange={() => changePromptContext(true, "Create task not finished")}
-                              ref={register({ required: true })}
-                              name={'description'} placeholder={"Description"}/>
+                               ref={register({ required: true })}
+                               name={'description'} placeholder={"Description"}/>
                     {errors.description && <p style={{color:'red'}}> Description required </p>}
                 </p>
                 <p>
@@ -200,5 +197,4 @@ export function CreateTask() {
             </form>
         </div>
     );
-
 }
