@@ -15,6 +15,7 @@ export function ChangeTaskPriority(props) {
         fetch(HOST_ADDRESS + '/tasks/change-priority', {
             method: 'PUT',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json'
 

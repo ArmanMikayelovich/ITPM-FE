@@ -48,6 +48,7 @@ export function CreateTask() {
             },
             method: 'POST',
             mode: 'cors',
+            credentials: "include",
             body: JSON.stringify(data)
         }).then(response => {
             if (response.status === 200) {

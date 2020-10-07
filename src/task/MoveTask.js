@@ -33,6 +33,7 @@ export function MoveTask(props) {
             fetch(HOST_ADDRESS + '/tasks/move', {
                 method: 'POST',
                 mode: 'cors',
+                credentials: "include",
                 headers: {
                     'Content-Type': 'application/json'
                 },

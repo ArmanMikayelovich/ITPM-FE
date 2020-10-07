@@ -8,6 +8,7 @@ export function RegisterForm() {
             fetch('http://localhost:8080/users', {
                 method: 'POST',
                 mode: 'cors',
+                credentials: "include",
                 headers: {
                     'Content-Type': 'application/json'
 

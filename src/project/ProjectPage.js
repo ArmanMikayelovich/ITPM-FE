@@ -16,7 +16,7 @@ import {ProjectVersionsTable} from "./ProjectVersionsTable";
 import {Link} from "react-router-dom";
 import {AddVersionToProject} from "./AddProjectVersion";
 import {AttachUserToProject} from "./AttachUserToProject";
-import {onLinkClickAction} from "./confirm/onClickAction";
+import {onLinkClickAction} from "../confirm/onClickAction";
 import {getProjectById} from "../rest-service/ProjectService";
 
 export function ProjectPage() {

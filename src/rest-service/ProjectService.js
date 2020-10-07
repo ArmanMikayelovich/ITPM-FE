@@ -6,6 +6,7 @@ export function createProject(data) {
     fetch(HOST_ADDRESS + '/projects', {
         method: 'POST',
         mode: 'cors',
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json'
 
@@ -29,6 +30,7 @@ export async function getProjectVersions(projectId) {
     let response = await fetch(HOST_ADDRESS + `/projects/${projectId}/versions`, {
         method: 'GET',
         mode: 'cors',
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json'
 
@@ -42,6 +44,7 @@ export async function getUsersOfProject(projectId) {
     let response = await fetch(HOST_ADDRESS + `/users/by-project/${projectId}`, {
         method: 'GET',
         mode: 'cors',
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json'
 
@@ -54,6 +57,7 @@ export async  function getProjectsOfUser(userId) {
     let response = await fetch(HOST_ADDRESS + `/projects/by-user/${userId}`, {
         method: 'GET',
         mode: 'cors',
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
@@ -65,10 +69,10 @@ export async  function getProjectsOfUser(userId) {
 export async  function getProjectById(projectId) {
     let response = await fetch(HOST_ADDRESS + `/projects/by-id/${projectId}`, {
         method: 'GET',
-        mode: 'cors',
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
+            // 'Access-Control-Allow-Origin': '*'
         },
     });
     return await response.json();

@@ -15,6 +15,7 @@ export function ChangeTaskState(props) {
         fetch(HOST_ADDRESS + '/tasks/change-state', {
             method: 'PUT',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json'
 

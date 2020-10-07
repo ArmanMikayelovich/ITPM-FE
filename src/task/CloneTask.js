@@ -33,6 +33,7 @@ export function CloneTask(props) {
             fetch(HOST_ADDRESS + '/tasks/clone', {
                 method: 'POST',
                 mode: 'cors',
+                credentials: "include",
                 headers: {
                     'Content-Type': 'application/json'
                 },

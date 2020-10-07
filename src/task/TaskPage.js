@@ -13,7 +13,7 @@ import {CloneTask} from "./CloneTask";
 import {MoveTask} from "./MoveTask";
 import {getFileInfosOfTask} from "../rest-service/FileService";
 import {FileNameWithHref} from "./FileNameWithHref";
-import {onLinkClickAction} from "../project/confirm/onClickAction";
+import {onLinkClickAction} from "../confirm/onClickAction";
 import {getTaskById} from "../rest-service/TaskService";
 import * as PropTypes from "prop-types";
 import {SubTaskTable} from "./SubTaskTable";

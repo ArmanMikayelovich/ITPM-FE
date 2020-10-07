@@ -12,6 +12,7 @@ export function AddVersionToProject(props) {
         fetch(HOST_ADDRESS + `/projects/${project.id}/versions`, {
             method: 'POST',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json'
             },

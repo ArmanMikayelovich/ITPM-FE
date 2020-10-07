@@ -24,6 +24,7 @@ export function CreateCommentForm(props) {
         fetch(HOST_ADDRESS + '/tasks/' + data.taskId + "/comments", {
             method: 'POST',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -103,6 +104,7 @@ function UpdateCommentForm() {
         fetch(HOST_ADDRESS + '/tasks/' + data.taskId + "/comments", {
             method: 'PUT',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -154,6 +156,7 @@ function CommentsByTaskId() {
     const fetchProject = () => fetch(HOST_ADDRESS + '/tasks/' + taskId + '/comments', {
         method: 'GET',
         mode: 'cors',
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
@@ -187,6 +190,7 @@ function CommentById() {
     const fetchProject = () => fetch(HOST_ADDRESS + '/tasks/comments/' + commentId, {
         method: 'GET',
         mode: 'cors',
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
@@ -218,6 +222,7 @@ function DeleteComment() {
         fetch(HOST_ADDRESS + '/tasks/comments/' + commentId, {
             method: 'DELETE',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json'
 
@@ -255,6 +260,7 @@ export function CommentList(props) {
         fetch(HOST_ADDRESS + `/tasks/${taskId}/comments`, {
             method: 'GET',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'

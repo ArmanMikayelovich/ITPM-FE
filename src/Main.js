@@ -1,5 +1,5 @@
-import React from "react";
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {Route, Switch, useHistory} from "react-router-dom";
 import {Login} from "./login/Login";
 import {Home} from "./Home";
 import {BrowseProjects} from "./project/Projects";
@@ -12,32 +12,75 @@ import {CreateProject} from "./project/CreateProject";
 import {BackLogPage} from "./project/Backlog/BackLogPage";
 import {CreateSubTask} from "./task/CreateSubTask";
 import {SearchResultPage} from "./search/SearchResultPage";
+import {checkIsAuthenticated} from "./rest-service/AuthService";
 
 export function Main() {
-
+    let history = useHistory();
+    const [isAuthenticated, setIsAuthenticated] = useState();
+    useEffect(() => {
+        checkIsAuthenticated().then(response => {
+            if (response.status === 200) {
+                setIsAuthenticated(true);
+            } else {
+                setIsAuthenticated(false);
+            }
+        })
+    })
     return (
         <div style={{
-            padding : '25px'
+            padding: '25px'
         }}>
-                <Switch>
-                    <Route exact={true} path='/'>
-                        <Home/>
-                    </Route>
-                    <Route exact={true} path='/login'>
-                        <Login/>
-                    </Route>
-                    <Route exact path='/browse-projects' component={BrowseProjects}/>
-                    <Route exact path="/projects/:projectId" component={ProjectPage}/>
-                    <Route exact path="/projects/:projectId/tasks/:taskId" component={TaskPage}/>
-                    <Route exact path="/users/:userId" component={UserPage}/>
-                    <Route exact path="/projects/:projectId/tasks/:taskId/update" component={UpdateTask}/>
-                    <Route exact path="/projects/:projectId/tasks/:taskId/create-subtask" component={CreateSubTask}/>
-                    <Route exact path="/projects/:projectId/create-task" component={CreateTask}/>
-                    <Route exact path="/create-project" component={CreateProject}/>
-                    <Route exact path="/projects/:projectId/backlog" component={BackLogPage}/>
-                    <Route exact path="/search-results" component={SearchResultPage}/>
-                </Switch>
+            <Switch>
+                <Route exact={true} path='/'>
+                    <Home/>
+                </Route>
+                <Route exact={true} path='/login'>
+                    <Login/>
+                </Route>
+                <Route exact path='/browse-projects'>
+                    {isAuthenticated ? <BrowseProjects/> : <Login/>}
+
+                </Route>
+                <Route exact path="/projects/:projectId">
+                    {isAuthenticated ? <ProjectPage/> : <Login/>}
+                </Route>
+
+                <Route exact path="/projects/:projectId/tasks/:taskId">
+                    {isAuthenticated ? <TaskPage/> : <Login/>}
+                </Route>
+
+                <Route exact path="/users/:userId">
+                    {isAuthenticated ? <UserPage/> : <Login/>}
+                </Route>
+
+                <Route exact path="/projects/:projectId/tasks/:taskId/update">
+                    {isAuthenticated ? <UpdateTask/> : <Login/>}
+                </Route>
+
+                <Route exact path="/projects/:projectId/tasks/:taskId/create-subtask">
+                    {isAuthenticated ? <CreateSubTask/> : <Login/>}
+                </Route>
+
+
+                <Route exact path="/projects/:projectId/create-task">
+                    {isAuthenticated ? <CreateTask/> : <Login/>}
+                </Route>
+
+                <Route exact path="/create-project">
+                    {isAuthenticated ? <CreateProject/> : <Login/>}
+                </Route>
+
+
+                <Route exact path="/projects/:projectId/backlog" component={BackLogPage}>
+                    {isAuthenticated ? <BackLogPage/> : <Login/>}
+                </Route>
+
+                <Route exact path="/search-results">
+                    {isAuthenticated ? <SearchResultPage/> : <Login/>}
+                </Route>
+
+            </Switch>
 
         </div>
-    )
+    );
 }

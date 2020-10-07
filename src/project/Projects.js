@@ -4,7 +4,7 @@ import {createProject} from "../rest-service/ProjectService";
 import {HOST_ADDRESS} from '../constants/consts'
 import {Link} from "react-router-dom";
 import {getUserById, getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
-import {onLinkClickAction} from "./confirm/onClickAction";
+import {onLinkClickAction} from "../confirm/onClickAction";
 import {changePromptContext} from "../App";
 
 function CreateProjectForm() {
@@ -43,6 +43,7 @@ export function UpdateProjectForm(props) {
         fetch(HOST_ADDRESS + '/projects', {
             method: 'PUT',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json'
 
@@ -96,6 +97,7 @@ function ProjectById() {
     const fetchProject = () => fetch(HOST_ADDRESS + '/projects/by-id/' + projectId, {
         method: 'GET',
         mode: 'cors',
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
@@ -167,6 +169,7 @@ export function ProjectWithLinkToPage(props) {
     const fetchProject = () => fetch(HOST_ADDRESS + '/projects/by-id/' + projectId, {
         method: 'GET',
         mode: 'cors',
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'

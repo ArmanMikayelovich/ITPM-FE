@@ -1,4 +1,4 @@
-import {promptValue} from "../../App";
+import {promptValue} from "../App";
 import {checkComfirm} from "./confirm";
 
 export function onLinkClickAction(event) {

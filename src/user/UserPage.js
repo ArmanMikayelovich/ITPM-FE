@@ -24,6 +24,7 @@ export function UserPage() {
         fetch(HOST_ADDRESS + `/projects/by-user/${userId}`, {
             method: 'GET',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -93,6 +94,7 @@ function ProjectsOfUser(props) {
         fetch(HOST_ADDRESS + `/projects/by-user/${userId}`, {
             method: 'GET',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -145,6 +147,7 @@ function TasksOfUserInProject(props) {
         fetch(HOST_ADDRESS + `/users/${userId}/projects/${projectId}/tasks${query}`, {
             method: 'GET',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'

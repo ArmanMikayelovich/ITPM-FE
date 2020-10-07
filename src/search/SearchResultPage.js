@@ -49,10 +49,6 @@ export function SearchResultPage(props) {
     );
 }
 
-SearchResultPage.propTypes = {
-    results: PropTypes.object.isRequired
-}
-
 function CSSForDiv() {
     return {
         float: 'left',

@@ -9,6 +9,7 @@ function CreateSprintForm() {
         fetch(HOST_ADDRESS + '/sprints', {
             method: 'POST',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -55,6 +56,7 @@ function ChangeDeadLine() {
         fetch(HOST_ADDRESS + '/sprints', {
             method: 'PUT',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -102,6 +104,7 @@ function SprintsByProjectId() {
     const fetchProject = () => fetch(HOST_ADDRESS + '/sprints/by-project/' + projectId, {
         method: 'GET',
         mode: 'cors',
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'

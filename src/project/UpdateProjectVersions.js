@@ -20,6 +20,7 @@ export function UpdateProjectVersions(props) {
       fetch(HOST_ADDRESS + `/projects/${projectVersion.projectId}/versions`, {
             method: 'PUT',
             mode: 'cors',
+          credentials: "include",
             headers: {
                 'Content-Type': 'application/json'
             },

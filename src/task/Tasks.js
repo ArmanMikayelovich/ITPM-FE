@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import {HOST_ADDRESS} from "../constants/consts";
 import {Link, useHistory} from "react-router-dom";
 import * as PropTypes from "prop-types";
-import {onLinkClickAction} from "../project/confirm/onClickAction";
+import {onLinkClickAction} from "../confirm/onClickAction";
 
 
 function CreateSprintForm() {
@@ -12,6 +12,7 @@ function CreateSprintForm() {
         fetch(HOST_ADDRESS + '/tasks', {
             method: 'POST',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -74,6 +75,7 @@ function UpdateSprintForm() {
         fetch(HOST_ADDRESS + '/tasks', {
             method: 'PUT',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -140,6 +142,7 @@ export function TaskByIdWithLinkToPage(props) {
             fetch(HOST_ADDRESS + '/tasks/' + taskId, {
                 method: 'GET',
                 mode: 'cors',
+                credentials: "include",
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
@@ -179,6 +182,7 @@ export function DeleteTask(props) {
             fetch(HOST_ADDRESS + '/tasks/' + taskId, {
                 method: 'DELETE',
                 mode: 'cors',
+                credentials: "include",
                 headers: {
                     'Content-Type': 'application/json'
 
@@ -211,6 +215,7 @@ function AttachToUserForm() {
         fetch(HOST_ADDRESS + '/tasks/attach', {
             method: 'PUT',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'

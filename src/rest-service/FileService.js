@@ -7,6 +7,7 @@ export async function attachFileToTask(file, taskId) {
     await fetch(`${HOST_ADDRESS}/tasks/${taskId}/upload-file`, {
         method: 'POST',
         mode: 'cors',
+        credentials: "include",
         body: formData
     }).then(response => {
         if (response.status === 200) {
@@ -21,6 +22,7 @@ export async function getFileInfosOfTask(taskId) {
     const response = await fetch(HOST_ADDRESS + `/tasks/${taskId}/get-files`, {
         method: 'GET',
         mode: 'cors',
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'

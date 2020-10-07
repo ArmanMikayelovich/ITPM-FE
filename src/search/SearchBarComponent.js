@@ -19,13 +19,14 @@ export function SearchBarComponent() {
 
             },
         }).then((response) => {
-
-                let json = response.json();
-                json.then(data => setProjects(data.content));
+                if (response.status === 200) {
+                    let json = response.json();
+                    json.then(data => setProjects(data.content));
+                }
             }
         ).catch(error => console.log(`an error occurred ${error}`));
 
-    },[history]);
+    }, [history]);
 
     const onSubmit = (data) => {
         const searchText = data.searchText;
@@ -33,7 +34,7 @@ export function SearchBarComponent() {
         alert(JSON.stringify(data))
         if (searchText) {
             const trimmed = searchText.trim();
-            getSearchResults(trimmed,projectId).then(data => {
+            getSearchResults(trimmed, projectId).then(data => {
                 history.push("/search-results", data);
             })
         } else {
@@ -42,9 +43,9 @@ export function SearchBarComponent() {
     }
     return (
         <div>
-            <form onSubmit={handleSubmit(onSubmit)} >
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <input type={'text'} name={'searchText'} readOnly={false} ref={register}/> &nbsp;&nbsp;&nbsp;
-                <select ref={register} name={'projectId'} defaultValue={null} >
+                <select ref={register} name={'projectId'} defaultValue={null}>
                     <option value={''}>None</option>
                     {projects?.map(project => <option value={project.id}>{project.name}</option>)}
                 </select>
@@ -54,7 +55,7 @@ export function SearchBarComponent() {
     );
 }
 
-export async function getSearchResults(searchText,projectId) {
+export async function getSearchResults(searchText, projectId) {
     let query;
     if (searchText && projectId) {
         query = `/search?projectId=${projectId}&searchText=${searchText}`;
@@ -64,6 +65,7 @@ export async function getSearchResults(searchText,projectId) {
     let response = await fetch(HOST_ADDRESS + query, {
         method: 'GET',
         mode: 'cors',
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'

@@ -1,7 +1,7 @@
 import React, {useEffect, useLayoutEffect, useState} from "react";
 import {HOST_ADDRESS} from "../constants/consts";
 import {Link} from "react-router-dom";
-import {onLinkClickAction} from "../project/confirm/onClickAction";
+import {onLinkClickAction} from "../confirm/onClickAction";
 
 export function UserInfo() {
     return (
@@ -21,6 +21,7 @@ export function UserFullNameWithLinkToPage(props) {
         fetch(HOST_ADDRESS + '/users/' + userId, {
             method: 'GET',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -59,6 +60,7 @@ export function UserFullName(props) {
             fetch(HOST_ADDRESS + '/users/' + userId, {
                 method: 'GET',
                 mode: 'cors',
+                credentials: "include",
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
@@ -95,11 +97,13 @@ export async function getUserById(userId) {
     let response = await fetch(HOST_ADDRESS + '/users/' + userId, {
         method: 'GET',
         mode: 'cors',
+        credentials: "include",
         headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
         },
     });
-
-    return await response.json();
+    if (response.status === 200) {
+        return await response.json();
+    }
 }

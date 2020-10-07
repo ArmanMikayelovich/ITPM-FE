@@ -30,6 +30,7 @@ export function UpdateTask(props) {
         fetch(HOST_ADDRESS + `/users/by-project/${task?.projectId}`, {
             method: 'GET',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json'
 
@@ -55,6 +56,7 @@ export function UpdateTask(props) {
         fetch(HOST_ADDRESS + `/projects/${task?.projectId}/versions`, {
             method: 'GET',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json'
 
@@ -102,6 +104,7 @@ export function UpdateTask(props) {
         fetch(HOST_ADDRESS + '/tasks', {
             method: 'PUT',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json'
 

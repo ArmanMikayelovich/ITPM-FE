@@ -18,6 +18,7 @@ export function AttachTaskToSprint(props) {
                     'Content-Type': 'application/json'
                 },
                 method: 'PUT',
+               credentials: "include",
                 body: JSON.stringify(data)
             }).then(response => {
                 if (response.status === 200) {

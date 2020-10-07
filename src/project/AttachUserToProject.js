@@ -12,6 +12,7 @@ export function AttachUserToProject(props) {
         fetch(HOST_ADDRESS + '/projects/attach-user-to-project', {
             method: 'POST',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'

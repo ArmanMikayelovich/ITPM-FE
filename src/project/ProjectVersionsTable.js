@@ -9,6 +9,7 @@ export function ProjectVersionsTable(props) {
         fetch(HOST_ADDRESS + `/projects/${projectId}/versions`, {
             method: 'GET',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json'
 

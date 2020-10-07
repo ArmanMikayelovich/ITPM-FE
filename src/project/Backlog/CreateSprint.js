@@ -16,6 +16,7 @@ export function CreateSprint(props) {
         fetch(HOST_ADDRESS + '/sprints', {
             method: 'POST',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'

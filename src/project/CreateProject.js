@@ -13,6 +13,7 @@ export function CreateProject() {
         fetch(HOST_ADDRESS + `/projects`, {
             method: 'POST',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json'
             },
