@@ -7,6 +7,7 @@ import {getProjectVersion} from "../project/ProjectVersion";
 import {getTaskById} from "../rest-service/TaskService";
 import {changePromptContext} from "../App";
 import {attachFileToTask} from "../rest-service/FileService";
+import {getUserId} from "../user/UserInfo";
 
 export function UpdateTask(props) {
 
@@ -18,7 +19,7 @@ export function UpdateTask(props) {
         useState(task?.affectedProjectVersions);
     const [uploadingFiles, setUploadingFiles] = useState([]);
 
-    const {register, handleSubmit} = useForm();
+    const {register, handleSubmit, setValue} = useForm();
 
     let {taskId} = useParams();
     const history = useHistory();
@@ -39,9 +40,23 @@ export function UpdateTask(props) {
             if (response.status === 200) {
                 let promise = response.json();
                 promise.then(data => {
-                    let mapped = data.content.map(user =>
-                        <option key={task?.id + '' + user.userId}
-                                value={user.userId}>{user.firstName + " " + user.lastName}</option>
+                    let mapped = data.content.map(user => {
+                            console.log(task);
+                            if (task?.assignedUserId === user.userId) {
+
+                                return (
+                                    <option selected key={task?.id + '' + user.userId}
+                                            value={user.userId}>{user.firstName + " " + user.lastName}</option>
+                                )
+                            } else {
+                                return (
+                                    <option key={task?.id + '' + user.userId}
+                                            value={user.userId}>{user.firstName + " " + user.lastName}</option>
+                                )
+
+                            }
+
+                        }
                     );
                     setAssigningUsers(mapped);
                 })
@@ -114,9 +129,9 @@ export function UpdateTask(props) {
             .then((response) => {
                     if (response.status === 200) {
 
-                                uploadingFiles.forEach(file => {
-                                    attachFileToTask(file, task.id)
-                                })
+                        uploadingFiles.forEach(file => {
+                            attachFileToTask(file, task.id)
+                        })
                         alert("Task updated");
                         history.push(`/projects/${task.projectId}/tasks/${task.id}`)
                     } else {
@@ -149,7 +164,8 @@ export function UpdateTask(props) {
                     Task name:&nbsp;&nbsp; <input type={'text'} name={'name'} defaultValue={task?.name} ref={register}/>
                 </p>
                 <p>
-                    Task description:&nbsp;&nbsp;<input type={'text'} name={'description'} defaultValue={task?.description} ref={register}/>
+                    Task description:&nbsp;&nbsp;<input type={'text'} name={'description'}
+                                                        defaultValue={task?.description} ref={register}/>
                 </p>
                 <p>
                     Task type:&nbsp;&nbsp;
@@ -173,11 +189,12 @@ export function UpdateTask(props) {
                     Change assigned user: &nbsp;&nbsp;
                     <select ref={register} name={'assignedUserId'}>
                         {assigningUsers}
-                    </select>
+                    </select>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href={'#'} onClick={() => setValue("assignedUserId", getUserId())}>Assign to me.</a>
                 </p>
                 <br/>
                 <br/>
-                <div style={{width:'400px'}}>
+                <div style={{width: '400px'}}>
                     Select affected project version(s):&nbsp;&nbsp;
                     <MultiSelect
                         options={projectVersionOptions}

@@ -3,9 +3,7 @@ import {GITHUB_AUTH, GOOGLE_AUTH} from "../constants/consts";
 import {UserInfo} from "../user/UserInfo";
 
 
-export class Login extends React.Component {
-    render() {
-
+export function Login() {
 
         return (
             <div className="login-container">
@@ -22,5 +20,4 @@ export class Login extends React.Component {
 
             </div>
         );
-    }
 }

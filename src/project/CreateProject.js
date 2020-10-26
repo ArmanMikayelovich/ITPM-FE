@@ -2,6 +2,8 @@ import React from "react";
 import {useForm} from "react-hook-form";
 import {HOST_ADDRESS} from "../constants/consts";
 import {useHistory, useLocation} from "react-router";
+import {getUserId} from "../user/UserInfo";
+import {changePromptContext} from "../App";
 
 export function CreateProject() {
     const location = useLocation();
@@ -21,9 +23,10 @@ export function CreateProject() {
         }).then(response => {
             if (response.status === 200) {
                 alert("Project successfully created");
-                history.push("/browse");
+                history.push("/browse-projects");
             } else {
-                response.json(data => alert("An error occurred in creating the project.\n Message: " + data.message));
+                response.json()
+                    .then(data => alert("An error occurred in creating the project.\n Message: " + data.message));
 
             }
         }).catch(error => alert("An error occurred in creating the project."));
@@ -32,7 +35,7 @@ export function CreateProject() {
     return (
         <div>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <input type={'text'} ref={register} name={'creatorId'} defaultValue={user.userId} hidden={true}/>
+                <input type={'text'} ref={register} name={'creatorId'} defaultValue={getUserId()} hidden={true}/>
                 <p>
                     Project's ID: <br/>
                     <input type={'text'} ref={register} name={'id'}/>
@@ -44,7 +47,15 @@ export function CreateProject() {
 
                 <p>
                     Description: <br/>
-                    <input type={'text'} ref={register} name={'description'}/>
+                    <textarea style={{
+                        width:'450px',
+                        height: '120px',
+                        resize: 'none'
+                    }}
+                              onChange={() => changePromptContext(true, "Adding comment not finished.")}
+                              name='description'
+                              placeholder={"Comment text"}
+                              ref={register}/>
                 </p>
 
                 <input type={'submit'} value={"Create Project"}/>

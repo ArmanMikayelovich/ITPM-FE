@@ -146,10 +146,10 @@ function ProjectsByUserId(props) {
 
     const projectList = [];
 
-    for (let project of projects) {
+    for (let project of Array.from(projects)) {
         projectList.push(
             <ProjectWithLinkToPage key={project.id} projectId={project.id}/>
-        )
+        );
     }
 
     return (

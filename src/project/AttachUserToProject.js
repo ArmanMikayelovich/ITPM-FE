@@ -20,7 +20,8 @@ export function AttachUserToProject(props) {
             body: JSON.stringify(data)
         }).then(response => {
             if (response.status === 200) {
-                alert("User attached to project");
+                window.location.reload(false);
+
             } else {
                 const promise = response.json();
                 promise.then(data => alert(`Fail to attach User. error: code - ${data.status} message: ${data.message}`))

@@ -88,7 +88,9 @@ export function UserFullName(props) {
 
 
 export function getUserId() {
-    return 1;
+    const user = window.localStorage.getItem("user");
+
+  return JSON.parse(user)?.userId;
     //TODO fix this with security
 }
 

@@ -19,7 +19,7 @@ export function AddVersionToProject(props) {
             body: JSON.stringify(data)
         }).then(response => {
             if (response.status === 200) {
-                alert("Project Version successfully created");
+                window.location.reload(false);
             } else {
                 response.json().then(data =>
                     alert("An error occurred in creating the project version.\n Message: "

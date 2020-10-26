@@ -12,6 +12,7 @@ export function Home() {
                 response.json().then(data =>  {
                     setUser(data);
                     setIsFetched(true)
+                    window.localStorage.setItem("user", JSON.stringify(data));
                 });
             }
         })
