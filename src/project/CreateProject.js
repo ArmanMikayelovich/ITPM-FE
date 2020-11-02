@@ -1,17 +1,19 @@
 import React from "react";
 import {useForm} from "react-hook-form";
 import {HOST_ADDRESS} from "../constants/consts";
-import {useHistory, useLocation} from "react-router";
+import {useHistory} from "react-router";
 import {getUserId} from "../user/UserInfo";
 import {changePromptContext} from "../App";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
 
 export function CreateProject() {
-    const location = useLocation();
-    const user = location.user;
+
     const history = useHistory();
     const {register, handleSubmit} = useForm();
 
     const onSubmit = (data => {
+            changePromptContext(false,'')
         fetch(HOST_ADDRESS + `/projects`, {
             method: 'POST',
             mode: 'cors',
@@ -30,35 +32,41 @@ export function CreateProject() {
 
             }
         }).catch(error => alert("An error occurred in creating the project."));
-
     })
     return (
         <div>
+            <h3>Create new project.</h3>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <input type={'text'} ref={register} name={'creatorId'} defaultValue={getUserId()} hidden={true}/>
                 <p>
-                    Project's ID: <br/>
-                    <input type={'text'} ref={register} name={'id'}/>
-                </p>
-
-                <p>Name of project. <br/>
-                    <input type={'text'} ref={register} name={'name'}/>
+                    <TextField inputRef={register} variant={'outlined'} style={{width: '15%'}} name={'id'}
+                               id="standard-basic" label="Project's ID"
+                               onClick={() => changePromptContext(true,
+                                   "Creating project not finished.")}/>
                 </p>
 
                 <p>
-                    Description: <br/>
-                    <textarea style={{
-                        width:'450px',
-                        height: '120px',
-                        resize: 'none'
-                    }}
-                              onChange={() => changePromptContext(true, "Adding comment not finished.")}
-                              name='description'
-                              placeholder={"Comment text"}
-                              ref={register}/>
+                    <TextField inputRef={register} style={{width: '15%'}} name={'name'} variant={'outlined'}
+                               id="standard-basic" label="Project's name"
+                               onClick={() => changePromptContext(true,
+                                   "Creating project not finished.")}/>
                 </p>
 
-                <input type={'submit'} value={"Create Project"}/>
+                <p>
+                    <TextField inputRef={register}
+                               style={{width: '25%'}}
+                               rows={5} name={'description'}
+                               multiline={true}
+                               variant={'outlined'}
+                               id="standard-basic"
+                               label="Description"
+                               onClick={() => changePromptContext(true,
+                                   "Creating project not finished.")}/>
+
+                </p>
+
+                <Button variant={"contained"} style={{backgroundColor: 'green'}} type={'submit'}
+                        color={'primary'}> Create Project</Button>
             </form>
         </div>
     );

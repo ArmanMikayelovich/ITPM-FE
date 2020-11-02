@@ -17,7 +17,7 @@ export function UpdateProjectVersions(props) {
     const updatePage = props.updatePage;
 
     const updateProjectVersion = (data) => {
-      fetch(HOST_ADDRESS + `/projects/${projectVersion.projectId}/versions`, {
+      fetch(HOST_ADDRESS + `/projects/${data.projectId}/versions`, {
             method: 'PUT',
             mode: 'cors',
           credentials: "include",
