@@ -1,5 +1,6 @@
 import {HOST_ADDRESS} from "../constants/consts";
 import React from "react";
+import Button from "@material-ui/core/Button";
 
 export function LogOutButton() {
     const logout = () => {
@@ -27,7 +28,7 @@ export function LogOutButton() {
 
     return (
         <div>
-            <button onClick={logout}>Log out</button>
+            <Button variant={'contained'} color={'secondary'} onClick={logout}>Log out</Button>
         </div>
     );
 }
