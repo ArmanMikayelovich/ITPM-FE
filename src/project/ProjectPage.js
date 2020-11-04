@@ -83,7 +83,7 @@ export function ProjectPage() {
     );
 }
 
-function Board(props) {
+export function Board(props) {
     const projectId = props.projectId;
     const [sprint, setSprint] = useState(null);
 

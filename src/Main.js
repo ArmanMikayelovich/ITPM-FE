@@ -14,6 +14,7 @@ import {CreateSubTask} from "./task/CreateSubTask";
 import {SearchResultPage} from "./search/SearchResultPage";
 import {checkIsAuthenticated} from "./rest-service/AuthService";
 import {getAuthenticatedUser} from "./rest-service/UserRest";
+import {NewProjectPage} from "./project/NewProjectPage";
 
 export function Main() {
     const [isAuthenticated, setIsAuthenticated] = useState();
@@ -43,7 +44,7 @@ export function Main() {
 
                 </Route>
                 <Route exact path="/projects/:projectId">
-                    {isAuthenticated ? <ProjectPage/> : <Login/>}
+                    {isAuthenticated ? <NewProjectPage/> : <Login/>}
                 </Route>
 
                 <Route exact path="/projects/:projectId/tasks/:taskId">
