@@ -1,27 +1,19 @@
-import React, {useEffect, useState} from 'react'
-import {HOST_ADDRESS} from "./constants/consts";
+import React from 'react'
+
+
 export function Home() {
-    const [isFetched, setIsFetched] = useState(false);
-    const [user, setUser] = useState();
-    useEffect(() => {
-        fetch(HOST_ADDRESS + "/users/user", {
-            method: 'GET',
-            credentials: "include"
-        }).then(response => {
-            if (response.status === 200) {
-                response.json().then(data =>  {
-                    setUser(data);
-                    setIsFetched(true)
-                    window.localStorage.setItem("user", JSON.stringify(data));
-                });
-            }
-        })
-    },[isFetched])
+
     return (
         <div>
-            <h1>Welcome to ITPM ;)</h1>
-            {isFetched}
-            {JSON.stringify(user)}
+            <h1>ITPM</h1>
+            <h2>Issue Tracking &amp; Project Management System</h2>
+            <p>IT project management (ITPM) is the process of managing the plan,
+                organization, and accountability to achieve information technology goals.</p>
+            <p> Since the reach of IT spans across most of a business or enterprise,
+                the scope of these projects can be large and complex.</p>
+            <p>The magnitude of IT project management often means that it’s more than just
+                applying knowledge, aligning skills, and using regular tools and techniques to drive
+                a project to completion.</p>
         </div>
     );
 }

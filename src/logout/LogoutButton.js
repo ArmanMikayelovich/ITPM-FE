@@ -1,8 +1,11 @@
 import {HOST_ADDRESS} from "../constants/consts";
 import React from "react";
 import Button from "@material-ui/core/Button";
+import {useHistory} from "react-router";
 
 export function LogOutButton() {
+    const history = useHistory();
+
     const logout = () => {
         fetch(HOST_ADDRESS + '/logout',
             {
@@ -16,9 +19,9 @@ export function LogOutButton() {
                 //
                 },
             }).then(response => {
-                alert(response.status)
             if (response.status === 302 || response.status === 200) {
-                window.localStorage.removeItem("user");
+                window.localStorage.clear();
+                history.push('/');
                 window.location.reload(false);
             }
         }).catch(response => {

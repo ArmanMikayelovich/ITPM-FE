@@ -54,7 +54,8 @@ export async function getUsersOfProject(projectId) {
 }
 
 export async  function getProjectsOfUser(userId) {
-    let response = await fetch(HOST_ADDRESS + `/projects/by-user/${userId}`, {
+    let response = await fetch(HOST_ADDRESS + `/projects/by-user/${userId.userId}`, {
+
         method: 'GET',
         mode: 'cors',
         credentials: "include",

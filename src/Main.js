@@ -13,10 +13,11 @@ import {BackLogPage} from "./project/Backlog/BackLogPage";
 import {CreateSubTask} from "./task/CreateSubTask";
 import {SearchResultPage} from "./search/SearchResultPage";
 import {checkIsAuthenticated} from "./rest-service/AuthService";
+import {getAuthenticatedUser} from "./rest-service/UserRest";
 
 export function Main() {
-    let history = useHistory();
     const [isAuthenticated, setIsAuthenticated] = useState();
+
     useEffect(() => {
         checkIsAuthenticated().then(response => {
             if (response.status === 200) {

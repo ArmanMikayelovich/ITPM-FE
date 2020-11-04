@@ -9,17 +9,21 @@ import {makeStyles} from "@material-ui/core/styles";
 import {LogOutButton} from "../logout/LogoutButton";
 import {onLinkClickAction} from "../confirm/onClickAction";
 import {Link} from "react-router-dom";
-import {getUserId} from "../user/UserInfo";
+import {getUserId, UserFullName} from "../user/UserInfo";
 
 const useStyles = makeStyles({
     // This group of buttons will be aligned to the right
     rightToolbar: {
         marginLeft: "auto",
-        marginRight: -12
+        marginRight: -12,
+
     },
     menuButton: {
         marginRight: 16,
         marginLeft: -12
+    },
+    title: {
+        color: 'white'
     }
 })
 
@@ -45,32 +49,48 @@ export function Header() {
         <header>
             <AppBar position="static">
                 <Toolbar>
-
-                    <Link onClick={e => onLinkClickAction(e)} to={{pathname: '/browse-projects'}}>
-                        <Typography variant="h6" className={classes.title}>
-                            Browse Projects
+                    <Link onClick={e => onLinkClickAction(e)} to={{pathname: '/'}}>
+                        <Typography variant="h5" className={classes.title}>
+                            ITPM
                         </Typography>
-                    </Link>
+                    </Link> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-                    <Link onClick={e => onLinkClickAction(e)} to={{
-                        pathname: `/users/${getUserId()}`
-                    }}> <Typography variant="h6" className={classes.title}>
-                        &nbsp;&nbsp;&nbsp;&nbsp;Profile
-                    </Typography> </Link>
+                    {isAuthorized ?
+                        <Link onClick={e => onLinkClickAction(e)} to={{pathname: '/browse-projects'}}>
+                            <Typography variant="h6" className={classes.title}>
+                                Projects
+                            </Typography>
+                        </Link>: '' }
+                     &nbsp;&nbsp;&nbsp;&nbsp;
 
 
-                    {isAuthorized ? <section className={classes.rightToolbar}>
-                            <LogOutButton/>
-                        </section>
-                        :
-                        <section className={classes.rightToolbar}>
-                            <Link onClick={e => onLinkClickAction(e)} to={{pathname: '/browse-projects'}}>
+                    <section className={classes.rightToolbar}>
+                    <div style={{marginLeft: "auto",
+                        display:"inline-block"}}>
+                        {isAuthorized ?
+                            <Link onClick={e => onLinkClickAction(e)} to={{
+                                pathname: `/users/${getUserId()}`
+                            }}> <Typography variant="h6" style={{float:'right'}} className={classes.title}>
+                                <UserFullName userId={getUserId()}/>
+                            </Typography> </Link> : ''
+                        }
+
+                    </div>&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+                    <div style={{float:'right', marginLeft: "auto",
+                        marginRight: 3,display:"inline-block"}}>
+                        {isAuthorized ?
+                            <LogOutButton/> :
+                            <Link onClick={e => onLinkClickAction(e)} to={{pathname: '/login'}}>
                                 <Button color={'primary'}
                                         style={{backgroundColor: 'green', color: "white"}}
                                 >Log in </Button>
                             </Link>
 
-                        </section>}
+                        }
+                    </div>
+                      </section>
 
 
                 </Toolbar>

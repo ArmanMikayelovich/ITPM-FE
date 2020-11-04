@@ -1,7 +1,10 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Header} from './headers/Header'
 import './App.css';
 import {Main} from "./Main";
+import {checkIsAuthenticated} from "./rest-service/AuthService";
+import {getAuthenticatedUser} from "./rest-service/UserRest";
+import {useHistory} from "react-router";
 
 
 export let promptValue = {flag: false, text: ''};
@@ -14,6 +17,7 @@ export const changePromptContext = (flag, text) => {
 export const ConfirmFlagContext = React.createContext(promptValue);
 
 function App() {
+    const history = useHistory();
 
     return (
 

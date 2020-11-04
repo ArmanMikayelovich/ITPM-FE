@@ -2,10 +2,12 @@ import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {createProject} from "../rest-service/ProjectService";
 import {HOST_ADDRESS} from '../constants/consts'
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import {getUserById, getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
 import {onLinkClickAction} from "../confirm/onClickAction";
 import {changePromptContext} from "../App";
+import {ProjectsTable} from "./ProjectsTable";
+import Button from "@material-ui/core/Button";
 
 function CreateProjectForm() {
 
@@ -74,13 +76,14 @@ export function UpdateProjectForm(props) {
                        value={project.publisherId}/>
 
                 <br/>
-        Name: <input onChange={() => changePromptContext(true, "update project not finished")} type='text' name='name' placeholder={"Project name"} defaultValue={project.name}
-                           ref={register}/>
+                Name: <input onChange={() => changePromptContext(true, "update project not finished")} type='text'
+                             name='name' placeholder={"Project name"} defaultValue={project.name}
+                             ref={register}/>
 
                 <p>
-                    Description:  <input onChange={() => changePromptContext(true, "update project not finished")}
-                                         type='textarea' name="description" placeholder={"Description"}
-                           defaultValue={project.description} ref={register}/>
+                    Description: <input onChange={() => changePromptContext(true, "update project not finished")}
+                                        type='textarea' name="description" placeholder={"Description"}
+                                        defaultValue={project.description} ref={register}/>
                 </p>
                 <br/>
                 <input type='submit' readOnly={true} value={"Update project"}/>
@@ -187,7 +190,7 @@ export function ProjectWithLinkToPage(props) {
 
     return (
         <div>
-            <li><Link onClick={e => onLinkClickAction(e) } to={{
+            <li><Link onClick={e => onLinkClickAction(e)} to={{
                 pathname: `/projects/${project?.id}`,
 
             }}> {project?.name} </Link></li>
@@ -197,6 +200,7 @@ export function ProjectWithLinkToPage(props) {
 }
 
 export function BrowseProjects() {
+    const history = useHistory();
     const [user, setUser] = useState();
     let [isUserFetched, setIsUserFetched] = useState(false);
     useEffect(() => {
@@ -209,14 +213,18 @@ export function BrowseProjects() {
 
     return (
         <div>
-            User: <UserFullNameWithLinkToPage userId={getUserId()}/>
-            <ProjectsByUserId userId={getUserId()}/>
             <p>
-                <br/>
-                <Link onClick={e => onLinkClickAction(e) } to={{
-                    pathname: `/create-project`,
-                }}> Create New Project.</Link>
+
+                <Button variant="contained"
+                        color="primary"
+                        style={{backgroundColor: 'green'}}
+                        onClick={() => history.push(`/create-project`)}>
+                    Create New Project.
+                </Button>
             </p>
+            <ProjectsTable userId={getUserId()}/>
+
+
         </div>
     );
 }

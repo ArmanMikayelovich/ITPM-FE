@@ -41,9 +41,9 @@ export function UserFullNameWithLinkToPage(props) {
 
     return (
         <div>
-            <li key={userId}><Link onClick={e => onLinkClickAction(e)} to={{
+           <Link onClick={e => onLinkClickAction(e)} to={{
                 pathname: `/users/${userId}`
-            }}> <UserFullName user={user} /> </Link></li>
+            }}> <UserFullName user={user} /> </Link>
         </div>);
 
 }
