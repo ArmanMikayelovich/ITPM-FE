@@ -20,6 +20,7 @@ import MailIcon from '@material-ui/icons/Mail';
 import {useParams} from "react-router";
 import {Board} from "./ProjectPage";
 import {getProjectById} from "../rest-service/ProjectService";
+import Box from "@material-ui/core/Box";
 
 const drawerWidth = 250;
 
@@ -83,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export  function NewProjectPage() {
+export  function NewProjectPage(props) {
     let {projectId} = useParams();
     const [project, setProject] = useState();
     useEffect(() => {
@@ -167,8 +168,9 @@ export  function NewProjectPage() {
                 })}>
                 <div className={classes.drawerHeader} />
 
-
+                {props.children}
                 <Board projectId={projectId}/>
+
             </main>
         </div>
     );

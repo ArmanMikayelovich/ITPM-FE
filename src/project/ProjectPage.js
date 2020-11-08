@@ -18,6 +18,15 @@ import {AddVersionToProject} from "./AddProjectVersion";
 import {AttachUserToProject} from "./AttachUserToProject";
 import {onLinkClickAction} from "../confirm/onClickAction";
 import {getProjectById} from "../rest-service/ProjectService";
+import {makeStyles} from "@material-ui/core/styles";
+
+
+const useStyles = makeStyles({
+    taskList: {
+        display: 'inline-block',
+        position: 'relative'
+    }
+});
 
 export function ProjectPage() {
     let {projectId} = useParams();
@@ -25,7 +34,7 @@ export function ProjectPage() {
 
     useEffect(() => {
         getProjectById(projectId).then(data => setProject(data));
-    },[projectId])
+    }, [projectId])
 
     const updatePage = () => {
         window.location.reload(false);
@@ -84,6 +93,7 @@ export function ProjectPage() {
 }
 
 export function Board(props) {
+    const classes = useStyles();
     const projectId = props.projectId;
     const [sprint, setSprint] = useState(null);
 
@@ -118,10 +128,20 @@ export function Board(props) {
     }
 
     return (
-        <div>
-            <TaskList sprintId={sprint.id} taskState={TASK_TODO} listName={LIST_TODO}/>
-            <TaskList sprintId={sprint.id} taskState={TASK_IN_PROGRESS} listName={LIST_IN_PROGRESS}/>
-            <TaskList sprintId={sprint.id} taskState={TASK_DONE} listName={LIST_DONE}/>
+        <div style={{position:'absolute'}}>
+            <div className={classes.taskList}>
+                <TaskList sprintId={sprint.id} taskState={TASK_TODO} listName={LIST_TODO}/>
+            </div>
+            <div className={classes.taskList}>
+                <TaskList className={classes.taskList} sprintId={sprint.id} taskState={TASK_IN_PROGRESS}
+                          listName={LIST_IN_PROGRESS}/>
+            </div>
+            <div className={classes.taskList}>
+                <TaskList className={classes.taskList} sprintId={sprint.id} taskState={TASK_DONE} listName={LIST_DONE}/>
+
+            </div>
+
+
         </div>
     )
 }

@@ -4,7 +4,15 @@ import {HOST_ADDRESS} from "../constants/consts";
 import {Link, useHistory} from "react-router-dom";
 import * as PropTypes from "prop-types";
 import {onLinkClickAction} from "../confirm/onClickAction";
+import {TaskBorderForBoard} from "./TaskBorderForBoard";
+import {makeStyles} from "@material-ui/core/styles";
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
 
+
+const useStyles = makeStyles({
+
+});
 
 function CreateSprintForm() {
 
@@ -297,7 +305,7 @@ export function TaskList(props) {
 
                     let json = response.json();
                     json.then(data => {
-                        let taskList = data.map(task => <TaskWithLinkToPage key={task.id} task={task}/>)
+                        let taskList = data.map(task => <TaskBorderForBoard key={task.id} task={task}/>)
                         setTasks(taskList);
                     });
                 }
@@ -312,7 +320,11 @@ export function TaskList(props) {
             'marginRight': '10px'
         }}>
 
-            <ul>{listName}
+            <ul> <Box  height="100%"  style={{height:50, backgroundColor:'#3f51b5'}} borderRadius={12} border={1} borderColor="grey.500" >
+                <Typography style={{textAlign: 'center', paddingTop:7, color : 'white'}} variant="h5" >
+                    {listName.toUpperCase()}
+                </Typography>
+            </Box>
                 {tasks}
             </ul>
 
