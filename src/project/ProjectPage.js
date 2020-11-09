@@ -93,8 +93,9 @@ export function ProjectPage() {
 }
 
 export function Board(props) {
+    let {projectId} = useParams();
     const classes = useStyles();
-    const projectId = props.projectId;
+    // const projectId = props.projectId;
     const [sprint, setSprint] = useState(null);
 
     useEffect(() => {

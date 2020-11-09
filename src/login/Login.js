@@ -1,28 +1,31 @@
 import * as React from "react";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {GITHUB_AUTH, GOOGLE_AUTH} from "../constants/consts";
 import {UserInfo} from "../user/UserInfo";
 import {checkIsAuthenticated} from "../rest-service/AuthService";
 import {getAuthenticatedUser} from "../rest-service/UserRest";
-import {useHistory} from "react-router";
+import {Redirect, useHistory} from "react-router";
 
 
 export function Login() {
     const history = useHistory();
+    const [isLoggedId, setIsLoggedIn] = useState(false);
+
+
     useEffect(() => {
         checkIsAuthenticated().then(response => {
             if (response.status === 200) {
                 getAuthenticatedUser().then(user => {
                                       localStorage.setItem('user', JSON.stringify(user));
-                    history.push('/');
-                    window.location.reload(false);
-
+                    setIsLoggedIn(true);
                 });
 
             }
-        })
-    }, [history])
-
+        },[isLoggedId])
+    }, [isLoggedId]);
+    if (isLoggedId) {
+        return <Redirect to="/"/>
+    }
     return (
         <div className="login-container">
             <div className="title">

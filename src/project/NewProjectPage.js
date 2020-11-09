@@ -169,7 +169,7 @@ export  function NewProjectPage(props) {
                 <div className={classes.drawerHeader} />
 
                 {props.children}
-                <Board projectId={projectId}/>
+                {/*<Board projectId={projectId}/>*/}
 
             </main>
         </div>

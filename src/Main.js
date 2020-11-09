@@ -3,7 +3,7 @@ import {Route, Switch, useHistory} from "react-router-dom";
 import {Login} from "./login/Login";
 import {Home} from "./Home";
 import {BrowseProjects} from "./project/Projects";
-import {ProjectPage} from "./project/ProjectPage";
+import {Board, ProjectPage} from "./project/ProjectPage";
 import {TaskPage} from "./task/TaskPage";
 import {UserPage} from "./user/UserPage";
 import {UpdateTask} from "./task/UpdateTask";
@@ -43,29 +43,30 @@ export function Main() {
                     {isAuthenticated ? <BrowseProjects/> : <Login/>}
 
                 </Route>
-                <Route exact path="/projects/:projectId">
-                    {isAuthenticated ? <NewProjectPage/> : <Login/>}
+
+                <Route exact={true} path="/projects/:projectId">
+                    {isAuthenticated ? <NewProjectPage> <Board /> </NewProjectPage> : <Login/>}
                 </Route>
 
-                <Route exact path="/projects/:projectId/tasks/:taskId">
-                    {isAuthenticated ? <TaskPage/> : <Login/>}
+                <Route exact={true} path="/projects/:projectId/tasks/:taskId">
+                    {isAuthenticated ?  <NewProjectPage> <TaskPage/> </NewProjectPage> : <Login/>}
                 </Route>
 
                 <Route exact path="/users/:userId">
-                    {isAuthenticated ? <UserPage/> : <Login/>}
+                    {isAuthenticated ?   <UserPage/>  : <Login/>}
                 </Route>
 
                 <Route exact path="/projects/:projectId/tasks/:taskId/update">
-                    {isAuthenticated ? <UpdateTask/> : <Login/>}
+                    {isAuthenticated ? <NewProjectPage> <UpdateTask/> </NewProjectPage> : <Login/>}
                 </Route>
 
                 <Route exact path="/projects/:projectId/tasks/:taskId/create-subtask">
-                    {isAuthenticated ? <CreateSubTask/> : <Login/>}
+                    {isAuthenticated ? <NewProjectPage> <CreateSubTask/> </NewProjectPage>  : <Login/>}
                 </Route>
 
 
                 <Route exact path="/projects/:projectId/create-task">
-                    {isAuthenticated ? <CreateTask/> : <Login/>}
+                    {isAuthenticated ? <NewProjectPage> <CreateTask/> </NewProjectPage> : <Login/>}
                 </Route>
 
                 <Route exact path="/create-project">
@@ -74,7 +75,7 @@ export function Main() {
 
 
                 <Route exact path="/projects/:projectId/backlog" component={BackLogPage}>
-                    {isAuthenticated ? <BackLogPage/> : <Login/>}
+                    {isAuthenticated ? <NewProjectPage> <BackLogPage/> </NewProjectPage> : <Login/>}
                 </Route>
 
                 <Route exact path="/search-results">
