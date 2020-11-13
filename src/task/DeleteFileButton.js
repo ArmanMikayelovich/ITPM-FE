@@ -1,6 +1,7 @@
 import {HOST_ADDRESS} from "../constants/consts";
 import React from "react";
 import * as PropTypes from "prop-types";
+import Button from "@material-ui/core/Button";
 export function DeleteFileButton(props) {
     const taskId = props.taskId;
     const fileId = props.fileId;
@@ -8,6 +9,7 @@ export function DeleteFileButton(props) {
         fetch(HOST_ADDRESS + `/tasks/${taskId}/delete-file/${fileId}`, {
             method: 'DELETE',
             mode: 'cors',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
@@ -18,13 +20,11 @@ export function DeleteFileButton(props) {
                 window.location.reload(false);
             }
         });
-
-
     }
 
     return (
         <div>
-            <button onClick={deleteTask} >Delete File</button>
+            <Button style={{backgroundColor:'#be0000'}} variant={'contained'} color={'secondary'} onClick={deleteTask} >Delete File</Button>
         </div>
     )
 

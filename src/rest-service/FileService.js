@@ -4,17 +4,11 @@ export async function attachFileToTask(file, taskId) {
     const formData = new FormData();
     formData.append('file', file);
 
-    await fetch(`${HOST_ADDRESS}/tasks/${taskId}/upload-file`, {
+    return await fetch(`${HOST_ADDRESS}/tasks/${taskId}/upload-file`, {
         method: 'POST',
         mode: 'cors',
         credentials: "include",
         body: formData
-    }).then(response => {
-        if (response.status === 200) {
-            console.log("all is ok task with files created  ");
-        } else {
-            console.error("Error on creating task with files: " + response);
-        }
     });
 }
 

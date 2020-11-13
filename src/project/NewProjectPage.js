@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import {makeStyles, useTheme} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
@@ -17,13 +17,15 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
-import {useParams} from "react-router";
-import {Board} from "./ProjectPage";
+import {useLocation, useParams} from "react-router";
 import {getProjectById} from "../rest-service/ProjectService";
-import Box from "@material-ui/core/Box";
+import {Link} from "react-router-dom";
+import * as PropTypes from "prop-types";
+import {getTaskById} from "../rest-service/TaskService";
 
 const drawerWidth = 250;
-
+const BACKLOG = 'backlog';
+const CREATE_SUBTASK = 'create-subtask';
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'absolute',
@@ -49,12 +51,12 @@ const useStyles = makeStyles((theme) => ({
         display: 'none',
     },
     drawer: {
-        position:'absolute',
+        position: 'absolute',
         width: drawerWidth,
         flexShrink: 0,
     },
     drawerPaper: {
-        width:drawerWidth,
+        width: drawerWidth,
         top: 65,
     },
     drawerHeader: {
@@ -66,14 +68,14 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'flex-end',
     },
     content: {
-        position:'relative',
+        position: 'relative',
         flexGrow: 1,
         padding: theme.spacing(3),
         transition: theme.transitions.create('margin', {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
         }),
-        marginLeft:0,
+        marginLeft: 0,
     },
     contentShift: {
         transition: theme.transitions.create('margin', {
@@ -84,14 +86,14 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export  function NewProjectPage(props) {
+export function NewProjectPage(props) {
     let {projectId} = useParams();
     const [project, setProject] = useState();
     useEffect(() => {
         getProjectById(projectId).then(data => {
             setProject(data);
         })
-    },[projectId])
+    }, [projectId])
 
     const classes = useStyles();
     const theme = useTheme();
@@ -107,7 +109,7 @@ export  function NewProjectPage(props) {
 
     return (
         <div className={classes.root}>
-            <CssBaseline />
+            <CssBaseline/>
             <AppBar
                 position="relative"
                 className={clsx(classes.appBar, {
@@ -122,11 +124,14 @@ export  function NewProjectPage(props) {
                         edge="start"
                         className={clsx(classes.menuButton, open && classes.hide)}
                     >
-                        <MenuIcon />
+                        <MenuIcon/>
                     </IconButton>
-                    <Typography variant="h6" noWrap>
-                        {project?.name}
-                    </Typography>
+
+                    <NavigationBar project={project}/>
+                    {/*   <Link to={`/projects/${projectId}`}>
+                        <Typography variant="h6" noWrap style={{color: 'white'}}>
+                            {project?.name}
+                        </Typography></Link>*/}
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -141,37 +146,133 @@ export  function NewProjectPage(props) {
             >
                 <div className={classes.drawerHeader}>
                     <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                        {theme.direction === 'ltr' ? <ChevronLeftIcon/> : <ChevronRightIcon/>}
                     </IconButton>
                 </div>
-                <Divider />
+                <Divider/>
                 <List>
                     {['Tasks', 'Back-Log', 'Settings'].map((text, index) => (
                         <ListItem button key={text}>
-                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                            <ListItemText primary={text} />
+                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}</ListItemIcon>
+                            <ListItemText primary={text}/>
                         </ListItem>
                     ))}
                 </List>
-                {/*<Divider />
-                <List>
-                    {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                        <ListItem button key={text}>
-                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                            <ListItemText primary={text} />
-                        </ListItem>
-                    ))}
-                </List>*/}
             </Drawer>
             <main className={clsx(classes.content, {
-                    [classes.contentShift]: open,
-                })}>
-                <div className={classes.drawerHeader} />
+                [classes.contentShift]: open,
+            })}>
+                <div className={classes.drawerHeader}/>
 
                 {props.children}
-                {/*<Board projectId={projectId}/>*/}
+
 
             </main>
         </div>
     );
+}
+
+function NavigationBar(props) {
+    let location = useLocation();
+    let {projectId, taskId} = useParams();
+    const [task, setTask] = useState();
+    useEffect(() => {
+        if (taskId) {
+            getTaskById(taskId).then(data => setTask(data));
+        }
+    }, [location])
+
+    const project = props.project;
+    const path = location.pathname;
+    console.clear();
+    console.log(location);
+
+    let link = <Link to={`/projects/${projectId}`}>
+        <Typography variant="h6" noWrap style={{color: 'white'}}>
+            {project?.name}
+        </Typography></Link>
+
+    if(taskId && path.includes(CREATE_SUBTASK) ) {
+        link = (<div>
+            <div style={{display: 'inline-block', position: 'relative'}}>
+                <Link to={`/projects/${projectId}`}>
+                    <Typography variant="h6" noWrap style={{color: 'white'}}>
+                        {project?.name}
+                    </Typography>
+                </Link>
+            </div>
+            <div style={{display: 'inline-block', position: 'relative'}}>
+                <Typography variant="h6" noWrap style={{color: 'white'}}>
+                    &nbsp;\ &nbsp;tasks &nbsp;\ &nbsp;
+                </Typography>
+            </div>
+            <div style={{display: 'inline-block', position: 'relative'}}>
+                <Link to={`/projects/${projectId}/tasks/${taskId}`}>
+                    <Typography variant="h6" noWrap style={{color: 'white'}}>
+                        {task?.name}
+                    </Typography>
+                </Link>
+            </div>
+            <div style={{display: 'inline-block', position: 'relative'}}>
+                <Typography variant="h6" noWrap style={{color: 'white'}}>
+                    &nbsp;\ &nbsp;Create Subtask
+                </Typography>
+            </div>
+        </div>)
+   } else if (taskId) {
+        link = (<div>
+            <div style={{display: 'inline-block', position: 'relative'}}>
+                <Link to={`/projects/${projectId}`}>
+                    <Typography variant="h6" noWrap style={{color: 'white'}}>
+                        {project?.name}
+                    </Typography>
+                </Link>
+            </div>
+            <div style={{display: 'inline-block', position: 'relative'}}>
+                <Typography variant="h6" noWrap style={{color: 'white'}}>
+                    &nbsp;\ &nbsp;tasks &nbsp;\ &nbsp;
+                </Typography>
+            </div>
+            <div style={{display: 'inline-block', position: 'relative'}}>
+                <Link to={`/projects/${projectId}/tasks/${taskId}`}>
+                    <Typography variant="h6" noWrap style={{color: 'white'}}>
+                        {task?.name}
+                    </Typography>
+                </Link>
+            </div>
+        </div>)
+    } else if (path.includes(BACKLOG)) {
+        link = (<div>
+                <div style={{display: 'inline-block', position: 'relative'}}>
+                    <Link to={`/projects/${projectId}`}>
+                        <Typography variant="h6" noWrap style={{color: 'white'}}>
+                            {project?.name}
+                        </Typography>
+                    </Link>
+                </div>
+                <div style={{display: 'inline-block', position: 'relative'}}>
+                    <Typography variant="h6" noWrap style={{color: 'white'}}>
+                        &nbsp;\&nbsp;
+                    </Typography>
+                </div>
+                <div style={{display: 'inline-block', position: 'relative'}}>
+                    <Link to={`/projects/${projectId}/backlog`}>
+                        <Typography variant="h6" noWrap style={{color: 'white'}}>
+                            BackLog
+                        </Typography>
+                    </Link>
+                </div>
+            </div>
+        )
+    }
+
+
+    return (
+        link
+    )
+
+}
+
+NavigationBar.propTypes = {
+    project: PropTypes.object.isRequired
 }

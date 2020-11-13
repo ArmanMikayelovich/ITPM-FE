@@ -14,6 +14,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Low from '../img/taskPriorityIcons/low.png'
 import Default from '../img/taskPriorityIcons/default.png'
 import High from '../img/taskPriorityIcons/high.png'
+import {Link, useParams} from "react-router-dom";
 
 /**
  * constants for task states
@@ -78,14 +79,15 @@ const useStyles = makeStyles({
     img: {
         position: 'relative',
         top: 3,
-        right:7,
+        right: 7,
         width: 20,
         height: 20,
-        float:'right',
+        float: 'right',
     }
 });
 
 export function TaskBorderForBoard(props) {
+    const {projectId} = useParams();
     const task = props.task;
     const classes = useStyles();
 
@@ -102,18 +104,22 @@ export function TaskBorderForBoard(props) {
         name = task.name;
     }
     return (
-        <div style={{display:'table'}}>
+        <div style={{display: 'table'}}>
             <br/>
-            <Box  height="100%"  style={{height:50}} borderRadius={12} border={1} borderColor="grey.500" >
+            <Box height="100%" style={{height: 50}} borderRadius={12} border={1} borderColor="grey.500">
                 <TaskTypeIconComponent taskType={task.taskType}/>
-                <div className={classes.name}>{name}</div>
+                <div className={classes.name}>
+                    <Link to={`/projects/${projectId}/tasks/${task.id}`}>
+                        {name}
+                    </Link>
+                </div>
                 <div className={classes.taskState}>
                     <Box bgcolor={borderColor} borderRadius={12} border={1}
                          borderColor={borderColor}>{taskState === TODO ?
                         TODO :
                         taskState === IN_PROGRESS ? 'ONGOING' : DONE}</Box>
                 </div>
-                <br/> 
+                <br/>
                 <TaskPriorityIcon priority={task.priority}/>
 
             </Box>
@@ -161,7 +167,7 @@ TaskBorderForBoard.propTypes = {
     task: PropTypes.object.isRequired,
 }
 
-function TaskTypeIconComponent(props) {
+export function TaskTypeIconComponent(props) {
     const taskType = props.taskType;
     const classes = useStyles();
     const icon = getTaskTypeIcon(taskType);
@@ -174,6 +180,7 @@ function TaskTypeIconComponent(props) {
         </div>
     );
 }
+
 
 TaskTypeIconComponent.propTypes = {
     taskType: PropTypes.string.isRequired,
