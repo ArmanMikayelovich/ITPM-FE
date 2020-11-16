@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useParams} from "react-router";
+import {useHistory, useLocation, useParams} from "react-router";
 import {getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
 import {HOST_ADDRESS} from "../constants/consts";
 import {CommentList, CreateCommentForm} from "../comment/Comments";
@@ -12,19 +12,37 @@ import {Link} from "react-router-dom";
 import {CloneTask} from "./CloneTask";
 import {MoveTask} from "./MoveTask";
 import {getFileInfosOfTask} from "../rest-service/FileService";
-import {FileNameWithHref} from "./FileNameWithHref";
 import {onLinkClickAction} from "../confirm/onClickAction";
 import {getTaskById} from "../rest-service/TaskService";
 import * as PropTypes from "prop-types";
 import {SubTaskTable} from "./SubTaskTable";
-import {DeleteFileButton} from "./DeleteFileButton";
+import Typography from "@material-ui/core/Typography";
+import {AttachFileButtonComponent} from "./AttachFileButtonComponent";
+import BookmarksIcon from '@material-ui/icons/Bookmarks';
+import Fab from "@material-ui/core/Fab";
+import {TaskTypeIconComponent} from "./TaskBorderForBoard";
+import {AttachedFilesTable} from "./file/AttachedFileList";
+import Paper from "@material-ui/core/Paper";
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+
+
+const useStyles = makeStyles((theme) => ({
+    formControl: {
+        margin: theme.spacing(1),
+        minWidth: 120,
+    },
+    selectEmpty: {
+        marginTop: theme.spacing(2),
+    },
+}));
 
 export function TaskPage() {
+    const history = useHistory();
     let {taskId, projectId} = useParams();
 
     const [task, setTask] = useState();
     const [subTasks, setSubTasks] = useState(null);
-    const [files, setFiles] = useState([]);
+
     useEffect(() => {
 
         getTaskById(taskId).then(data => setTask(data));
@@ -45,9 +63,6 @@ export function TaskPage() {
                 }
             )
 
-            .catch(error => console.log(`Fail to save Task. An error occurred ${error}`));
-        getFileInfosOfTask(taskId).then(data => setFiles(data));
-
     }, [taskId]);
 
 
@@ -56,9 +71,40 @@ export function TaskPage() {
     }
 
 
+    function addSubtaskOnClickHandler() {
+        const url = `/projects/${projectId}/tasks/${taskId}/create-subtask`
+        history.push(url);
+    }
+
     return (
-        <div>
-            <h4 style={{float: 'left'}}>{task?.name}</h4>
+        <div style={{paddingLeft: 50}}>
+
+
+            <div id={'task-name-add-file-subtask-button'} style={{display: 'absolute'}}>
+                <div style={{display: 'inline-block'}}>
+                    <TaskTypeIconComponent taskType={task?.taskType}/>
+                </div>
+                &nbsp;&nbsp;
+                <div style={{display: 'inline-block',}}>
+                    <Typography variant={'h5'}>
+                        {task?.name}
+                    </Typography>
+                </div>
+
+
+                <br/>
+                <br/>
+
+                <div style={{paddingLeft: 15, display: "inline-block"}}>
+                    <AttachFileButtonComponent/>
+                </div>
+                <div style={{paddingLeft: 15, display: "inline-block"}}>
+                    <Fab onClick={() => addSubtaskOnClickHandler()} component="span" size="small" variant="extended">
+                        <BookmarksIcon/> Add Subtask.
+                    </Fab>
+                </div>
+
+            </div>
 
             <div style={{float: 'right'}}>
                 <div style={{
@@ -85,7 +131,7 @@ export function TaskPage() {
                     width: ' 200px',
                     padding: '20px'
                 }}>
-                    <h5>Task Type: {task?.taskType}</h5>
+
                     <h5>Task State: {task?.taskState}</h5>
                     <h5>Task Priority: {task?.priority}</h5>
 
@@ -154,22 +200,20 @@ export function TaskPage() {
                 </div>
 
             </div>
-
-            <div style={{
-                margin: 'auto',
-                width: '35%',
-                border: '3px solid green',
-                padding: '10px',
-            }}><h5>Description </h5> <p>{task?.description}</p></div>
-            {Array.from(files).map(file => <div>
-                <FileNameWithHref key={file.id} fileInfo={file}/>
-                {task.creatorId === getUserId().toString() && <DeleteFileButton taskId={taskId} fileId={file?.id} />}
-            </div>)}
             <br/>
-            {subTasks && Array.from(subTasks).length!==0 &&
+            <div style={{paddingLeft : 45}}>
+                <TaskDescription description={task?.description}/>
+            </div>
+            <br/>
+
+            <AttachedFilesTable task={task}/>
+
+
+            <br/>
+            {subTasks && Array.from(subTasks).length !== 0 &&
             <div>
                 <ul><b>Subtasks</b>
-                    { <SubTaskTable tasks={subTasks}/>}
+                    {<SubTaskTable tasks={subTasks}/>}
                 </ul>
             </div>}
             {task?.id && <div style={{float: 'center'}}>
@@ -179,6 +223,26 @@ export function TaskPage() {
 
         </div>
     );
+}
+
+function TaskDescription(props) {
+    const description = props.description;
+    return (
+        <div>
+            <Typography variant={"h6"}>Description</Typography>
+            <br/>
+
+            < Paper style={{ maxWidth: 750, overflow: 'auto'}}>
+                <Typography style={{paddingLeft:5,paddingTop:2,paddingRight:5,paddingBottom:3}} variant={"body1"} color={"textPrimary"}>
+                    {description}
+                </Typography>
+            </Paper>
+        </div>
+    )
+}
+
+TaskDescription.propTypes = {
+    description: PropTypes.string.isRequired
 }
 
 function AssignedUserWithAssignToMeButton(props) {
