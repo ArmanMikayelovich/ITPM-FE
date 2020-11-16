@@ -3,9 +3,9 @@ import {
     LIST_DONE,
     LIST_IN_PROGRESS,
     LIST_TODO,
-    TASK_DONE,
-    TASK_IN_PROGRESS,
-    TASK_TODO
+    TASK_STATE_DONE,
+    TASK_STATE_IN_PROGRESS,
+    TASK_STATE_TODO
 } from "../../constants/consts";
 import React, {useEffect, useState} from "react";
 import {TaskList} from "../../task/Tasks";
@@ -108,15 +108,15 @@ function TaskBoard(props) {
             </div>
             <DetachTaskFromSprint sprint={sprint} />
             <div style={getStyleForTaskList()}>
-                <TaskList sprintId={sprint.id} taskState={TASK_TODO} listName={LIST_TODO}/>
+                <TaskList sprintId={sprint.id} taskState={TASK_STATE_TODO} listName={LIST_TODO}/>
             </div>
 
             <div style={getStyleForTaskList()}>
-                <TaskList sprintId={sprint.id} taskState={TASK_IN_PROGRESS} listName={LIST_IN_PROGRESS}/>
+                <TaskList sprintId={sprint.id} taskState={TASK_STATE_IN_PROGRESS} listName={LIST_IN_PROGRESS}/>
             </div>
 
             <div style={getStyleForTaskList()}>
-                <TaskList sprintId={sprint.id} taskState={TASK_DONE} listName={LIST_DONE}/>
+                <TaskList sprintId={sprint.id} taskState={TASK_STATE_DONE} listName={LIST_DONE}/>
             </div>
         </div>
     );

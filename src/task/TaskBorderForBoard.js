@@ -127,7 +127,7 @@ export function TaskBorderForBoard(props) {
     );
 }
 
-function TaskPriorityIcon(props) {
+export function TaskPriorityIcon(props) {
     const classes = useStyles();
     const priority = props.priority;
     let img;
@@ -152,7 +152,7 @@ function TaskPriorityIcon(props) {
     }
     return (
         <div className={classes.img}>
-            <Tooltip title={`Priority:${priority.toLowerCase()}`}>
+            <Tooltip title={`Priority:${priority?.toLowerCase()}`}>
                 {img}
             </Tooltip>
         </div>

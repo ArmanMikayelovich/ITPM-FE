@@ -20,10 +20,12 @@ import Typography from "@material-ui/core/Typography";
 import {AttachFileButtonComponent} from "./AttachFileButtonComponent";
 import BookmarksIcon from '@material-ui/icons/Bookmarks';
 import Fab from "@material-ui/core/Fab";
-import {TaskTypeIconComponent} from "./TaskBorderForBoard";
+import {TaskPriorityIcon, TaskTypeIconComponent} from "./TaskBorderForBoard";
 import {AttachedFilesTable} from "./file/AttachedFileList";
 import Paper from "@material-ui/core/Paper";
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import {TaskStateChanger} from "./TaskStateChanger";
+import {LinkToTask} from "./LinkToTask";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -40,7 +42,7 @@ export function TaskPage() {
     const history = useHistory();
     let {taskId, projectId} = useParams();
 
-    const [task, setTask] = useState();
+    const [ task, setTask] = useState();
     const [subTasks, setSubTasks] = useState(null);
 
     useEffect(() => {
@@ -132,8 +134,10 @@ export function TaskPage() {
                     padding: '20px'
                 }}>
 
-                    <h5>Task State: {task?.taskState}</h5>
-                    <h5>Task Priority: {task?.priority}</h5>
+                  <TaskStateChanger task={task} isEnabled={(task?.assignedUserId === getUserId().toString()
+                        || task?.creatorId === getUserId().toString()) } />
+
+                    <Typography variant={"body1"} >Task Priority: <TaskPriorityIcon priority={task?.priority} /></Typography>
 
                     {task?.triggeredById !== undefined && task?.triggeredById !== null &&
                     task?.triggeredById !== '' &&
@@ -141,9 +145,10 @@ export function TaskPage() {
 
                     </h5>}
 
+                    {task?.parentId && <div>
+                        <h5>Parent: </h5> <LinkToTask taskId={task?.parentId} />
+                    </div>}
 
-                    <h5>Parent: </h5> {task?.parentId &&
-                <TaskByIdWithLinkToPage taskId={task?.parentId}/>}{/*TODO show parent only if task has it*/}
 
 
                     <h4>Project :<ProjectWithLinkToPage projectId={projectId}/></h4>

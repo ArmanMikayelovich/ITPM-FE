@@ -55,3 +55,16 @@ export async function getTaskById(taskId) {
     });
     return await response.json();
 }
+
+export async function updateTaskState(task) {
+   return await fetch(HOST_ADDRESS + '/tasks/change-state', {
+        method: 'PUT',
+        mode: 'cors',
+        credentials: "include",
+        headers: {
+            'Content-Type': 'application/json'
+
+        },
+        body: JSON.stringify(task)
+    })
+}
