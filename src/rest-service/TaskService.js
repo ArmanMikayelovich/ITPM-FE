@@ -68,3 +68,15 @@ export async function updateTaskState(task) {
         body: JSON.stringify(task)
     })
 }
+
+export async function updateTaskPriority(task) {
+    return await fetch(HOST_ADDRESS + '/tasks/change-priority', {
+        method: 'PUT',
+        mode: 'cors',
+        credentials: "include",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(task)
+    })
+}

@@ -6,15 +6,9 @@ import {getTaskById} from "../rest-service/TaskService";
 
 const useStyles = makeStyles({
     name: {
-        top: 5,
-        paddingTop: 5,
-        textAlign: 'center',
-        fontSize: 12,
-        fontWeight: 'bolder',
+        paddingLeft:10,
+        fontWeight: 'lighter',
         display: "inline-block",
-        width: '250px',
-        height: '150',
-        paddingLeft: '5px',
         float: 'left'
     }
 })
@@ -26,14 +20,23 @@ export function LinkToTask(props) {
     const taskId = props.taskId;
     const [task, setTask] = useState();
 
+    const [name, setName] = useState();
     useEffect(() => {
         getTaskById(taskId).then(data => setTask(data));
     }, [taskId]);
 
+    useEffect(() => {
+        if (task?.name.length > 60) {
+            setName(task?.name.substring(0, 50).concat('...'));
+        } else {
+            setName(task?.name);
+        }
+    },[task])
+
     return (
         <div className={classes.name}>
             <Link to={`/projects/${task?.projectId}/tasks/${task?.id}`}>
-                {task?.name}
+                {name}
             </Link>
         </div>
 

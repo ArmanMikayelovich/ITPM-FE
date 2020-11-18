@@ -1,17 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {useHistory, useLocation, useParams} from "react-router";
+import {useHistory, useParams} from "react-router";
 import {getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
 import {HOST_ADDRESS} from "../constants/consts";
 import {CommentList, CreateCommentForm} from "../comment/Comments";
-import {DeleteTask, TaskByIdWithLinkToPage} from "./Tasks";
-import {ChangeTaskState} from "./ChangeTaskState";
-import {ChangeTaskPriority} from "./ChangePriority";
-import {ProjectWithLinkToPage} from "../project/Projects";
-import {ProjectVersion} from "../project/ProjectVersion";
+import {DeleteTask} from "./Tasks";
 import {Link} from "react-router-dom";
 import {CloneTask} from "./CloneTask";
 import {MoveTask} from "./MoveTask";
-import {getFileInfosOfTask} from "../rest-service/FileService";
 import {onLinkClickAction} from "../confirm/onClickAction";
 import {getTaskById} from "../rest-service/TaskService";
 import * as PropTypes from "prop-types";
@@ -20,29 +15,23 @@ import Typography from "@material-ui/core/Typography";
 import {AttachFileButtonComponent} from "./AttachFileButtonComponent";
 import BookmarksIcon from '@material-ui/icons/Bookmarks';
 import Fab from "@material-ui/core/Fab";
-import {TaskPriorityIcon, TaskTypeIconComponent} from "./TaskBorderForBoard";
+import {TaskTypeIconComponent} from "./TaskBorderForBoard";
 import {AttachedFilesTable} from "./file/AttachedFileList";
 import Paper from "@material-ui/core/Paper";
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+
 import {TaskStateChanger} from "./TaskStateChanger";
 import {LinkToTask} from "./LinkToTask";
+import {TaskPriorityChanger} from "./TaskPriorityChanger";
+import {TaskInfoList} from "./TaskInfoList";
 
-
-const useStyles = makeStyles((theme) => ({
-    formControl: {
-        margin: theme.spacing(1),
-        minWidth: 120,
-    },
-    selectEmpty: {
-        marginTop: theme.spacing(2),
-    },
-}));
 
 export function TaskPage() {
+
+
     const history = useHistory();
     let {taskId, projectId} = useParams();
 
-    const [ task, setTask] = useState();
+    const [task, setTask] = useState();
     const [subTasks, setSubTasks] = useState(null);
 
     useEffect(() => {
@@ -108,79 +97,38 @@ export function TaskPage() {
 
             </div>
 
-            <div style={{float: 'right'}}>
-                <div style={{
-                    float: 'right',
-                    margin: '10px',
-                    border: '1px solid #eee',
-                    'boxShadow': '0 2px 2px #cccccc',
-                    width: ' 200px',
-                    padding: '20px'
-                }}>
-                    <h4 style={{float: 'right', 'borderRight': '30px solid transparent'}}> Creator:<br/>
-                        <UserFullNameWithLinkToPage
-                            userId={task?.creatorId}/></h4>
-                    <AssignedUserWithAssignToMeButton assignedUserId={task?.assignedUserId} taskId={taskId}/>
-                    <br/>
-                    <br/>
-
+            <div style={{
+                float: 'right',
+                margin: '10px',
+                border: '1px solid #eee',
+                'boxShadow': '0 2px 2px #cccccc',
+                width: '35%',
+                padding: '20px'
+            }}>
+                <div style={{display: "inline-block"}}>
+                    <TaskStateChanger task={task} isEnabled={(task?.assignedUserId === getUserId().toString()
+                        || task?.creatorId === getUserId().toString())}/>
                 </div>
-                <div style={{
-                    float: 'right',
-                    margin: '10px',
-                    border: '1px solid #eee',
-                    'boxShadow': '0 2px 2px #cccccc',
-                    width: ' 200px',
-                    padding: '20px'
-                }}>
-
-                  <TaskStateChanger task={task} isEnabled={(task?.assignedUserId === getUserId().toString()
-                        || task?.creatorId === getUserId().toString()) } />
-
-                    <Typography variant={"body1"} >Task Priority: <TaskPriorityIcon priority={task?.priority} /></Typography>
-
-                    {task?.triggeredById !== undefined && task?.triggeredById !== null &&
-                    task?.triggeredById !== '' &&
-                    <h5>Trigger : {task?.triggerType} <TaskByIdWithLinkToPage taskId={task?.triggeredById}/>
-
-                    </h5>}
-
-                    {task?.parentId && <div>
-                        <h5>Parent: </h5> <LinkToTask taskId={task?.parentId} />
-                    </div>}
-
-
-
-                    <h4>Project :<ProjectWithLinkToPage projectId={projectId}/></h4>
-                    <h5>Project version id : <ProjectVersion versionId={task?.projectVersionId}/></h5>
-                    <ul>Affected Project versions
-                        {task?.affectedProjectVersions && task?.affectedProjectVersions.map(versionId => <ProjectVersion
-                            key={versionId} versionId={versionId}/>)}
-                    </ul>
+                <div style={{display: "inline-block"}}>
+                    <TaskPriorityChanger task={task} isEnabled={task?.creatorId === getUserId().toString()}/>
                 </div>
-                <div>
 
-                    {task?.assignedUserId === getUserId().toString() && <div style={{
+                <br/>
+                <TaskInfoList task={task}/>
 
-                        margin: 'auto',
-                        border: '3px solid green',
-                        padding: '10px',
-                    }}>
-                        <ChangeTaskState updatePage={reRenderPage} task={task}/>
-                    </div>}
 
-                    {(task?.assignedUserId === getUserId().toString() || task?.creatorId === getUserId().toString())
+
+                 {/*   {(task?.assignedUserId === getUserId().toString() || task?.creatorId === getUserId().toString())
                     && <div style={{
 
                         margin: 'auto',
                         border: '3px solid green',
                         padding: '10px',
                     }}>
-                        <ChangeTaskPriority task={task} updatePage={reRenderPage}/>
                         <CloneTask task={task}/>
-                    </div>}
+                    </div>}*/}
 
-                    {task?.creatorId === getUserId().toString() && <div style={{
+                 {/*   {task?.creatorId === getUserId().toString() && <div style={{
                         margin: 'auto',
                         border: '3px solid green',
                         padding: '10px',
@@ -190,23 +138,19 @@ export function TaskPage() {
                             pathname: `/projects/${task?.projectId}/tasks/${task?.id}/update`,
                         }}>Update Task</Link>
                         <br/>
-                        <Link onClick={e => onLinkClickAction(e)} to={{
-                            pathname: `/projects/${projectId}/tasks/${taskId}/create-subtask`
-                        }}>Create SubTask</Link>
                     </div>
                     }
-
-                    {task?.creatorId === getUserId().toString() && <div style={{
+*/}
+                   {/* {task?.creatorId === getUserId().toString() && <div style={{
                         margin: 'auto',
                         border: '3px solid red',
                         padding: '5px',
                     }}>
-                        <DeleteTask taskId={taskId}/></div>}
-                </div>
+                        <DeleteTask taskId={taskId}/></div>}*/}
 
             </div>
             <br/>
-            <div style={{paddingLeft : 45}}>
+            <div style={{paddingLeft: 45}}>
                 <TaskDescription description={task?.description}/>
             </div>
             <br/>
@@ -237,8 +181,9 @@ function TaskDescription(props) {
             <Typography variant={"h6"}>Description</Typography>
             <br/>
 
-            < Paper style={{ maxWidth: 750, overflow: 'auto'}}>
-                <Typography style={{paddingLeft:5,paddingTop:2,paddingRight:5,paddingBottom:3}} variant={"body1"} color={"textPrimary"}>
+            < Paper style={{maxWidth: 750, overflow: 'auto'}}>
+                <Typography style={{paddingLeft: 5, paddingTop: 2, paddingRight: 5, paddingBottom: 3}} variant={"body1"}
+                            color={"textPrimary"}>
                     {description}
                 </Typography>
             </Paper>

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import {createProject} from "../rest-service/ProjectService";
+import {createProject, getProjectById} from "../rest-service/ProjectService";
 import {HOST_ADDRESS} from '../constants/consts'
 import {Link, useHistory} from "react-router-dom";
 import {getUserById, getUserId, UserFullNameWithLinkToPage} from "../user/UserInfo";
@@ -169,24 +169,9 @@ export function ProjectWithLinkToPage(props) {
     const projectId = props.projectId
     const [project, setProject] = useState(undefined);
 
-    const fetchProject = () => fetch(HOST_ADDRESS + '/projects/by-id/' + projectId, {
-        method: 'GET',
-        mode: 'cors',
-        credentials: "include",
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-    }).then((response) => {
-
-            let json = response.json();
-            json.then(data => setProject(data));
-        }
-    ).catch(error => console.log(`an error occurred ${error}`));
-
-    if (project === undefined) {
-        fetchProject();
-    }
+   useEffect(() => {
+       getProjectById(projectId).then(data => setProject(data));
+   },[projectId])
 
     return (
         <div>
