@@ -19,6 +19,7 @@ export function RegisterForm() {
     }
     return (
         <div>
+            
             <h3>Registration</h3>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <input type='text' placeholder={"E-mail"} name='email' ref={register}/>
